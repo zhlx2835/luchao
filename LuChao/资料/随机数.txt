@@ -1,0 +1,8 @@
+	
+	public static int suijishu() {
+		Random ra = new Random();
+		for (int i = 100; i < 1000; i++) {
+			System.out.println(ra.nextInt(10000000)+1);
+		}
+		return ra.nextInt(10000000)+1;
+	}

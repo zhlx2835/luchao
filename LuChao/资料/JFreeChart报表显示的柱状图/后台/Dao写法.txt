@@ -1,0 +1,50 @@
+ /**
+     * 隐患性质分析图
+     * @param massquery
+     * @param pagin
+     * @return
+     * @throws Exception
+     */
+    public List getyhxzfxListtu(Massquery massquery)throws Exception {
+  	   List relist=null;
+  	   List param=new ArrayList();
+  	   Engine engine=null;
+  	   StringBuffer sb=new StringBuffer();
+  	   try{
+  		   String etime = massquery.getEtime();
+  		   String stime = massquery.getStime();
+  		   String cname = massquery.getCname();
+  		  
+  		   sb.append(" select wentitype,sum(noc) ssw,sum(yesc) fsw,sum(noc)+sum(yesc) swnumber ");
+		   sb.append(" from (select distinct(wentitype),sfsw, ");
+		   sb.append(" case when sfsw='否' then 0 else count(wentitype) end noc, ");
+		   sb.append(" case when sfsw='是' then 0 else count(wentitype) end yesc ");
+		   sb.append(" from wenti where 1=1 ");
+		   
+		  if( cname != null && !cname.equals("")){
+			   sb.append(" and  cname =? ");
+			   param.add(cname);
+			   
+		   }if( stime != null && !stime.equals("")){
+			   sb.append(" and  ftime >=? ");
+			   param.add(stime);
+		   }if( etime != null && !etime.equals("")){
+			   sb.append(" and  ftime <=? ");
+			   param.add(etime);
+		   }
+		   sb.append(" group by wentitype,sfsw) a ");
+		   sb.append("group by wentitype");
+  			 
+  		  engine=EngineFactory.getEngine("test");
+  		  Query query=engine.getQuery();
+  		  relist=query.getResults(sb.toString(),param.toArray(),WluruVO.class);
+  	      engine.commit();
+  	   }catch(Exception e){
+  		  engine.rollback();
+  		  log.error(e);
+  		  throw e;
+  	   }finally{
+            engine.closeEngine();		   
+   	   }
+  	   return relist;
+     }

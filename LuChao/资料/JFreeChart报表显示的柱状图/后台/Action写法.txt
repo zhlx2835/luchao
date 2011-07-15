@@ -1,0 +1,39 @@
+/**
+	 * Òþ»¼ÐÔÖÊ·ÖÎöÍ¼
+	 * @param mapping
+	 * @param form
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	public ActionForward yhxzfxgettu(ActionMapping mapping, ActionForm form,
+			HttpServletRequest request, HttpServletResponse response) {
+		DynaActionForm dy = (DynaActionForm) form;
+		Massquery massquery = (Massquery) dy.get("massquery");
+		WluruBO bo = new WluruBO();
+		String cname = request.getParameter("cname");
+		String stime = request.getParameter("stime");
+		String etime = request.getParameter("etime");
+		massquery.setCname(cname);
+		massquery.setStime(stime);
+		massquery.setEtime(etime);
+		
+		try {
+			List list = bo.getyhxzfxListtu(massquery);
+			
+			if (list != null && list.size() > 0) {
+				request.setAttribute("yhxzfxlist", list);
+				
+			} else {
+				ActionMessages messages = new ActionMessages();
+				messages.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(
+				"no.count"));
+				saveMessages(request, messages);
+			}
+			
+			dy.set("massquery",massquery);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return mapping.findForward("yhxzfxgettu");
+	}
