@@ -1,0 +1,47 @@
+/**
+	 * 导出EXCEL走动地点分析数据
+	 * @param req
+	 * @param resp
+	 * @return
+	 * @throws Exception 
+	 * @throws Exception
+	 */
+	public ActionForward selectEXCEL(ActionMapping mapping, ActionForm form,	HttpServletRequest request, HttpServletResponse response) throws Exception {
+		
+		DynaActionForm dy = (DynaActionForm) form;
+		String page =(String)request.getParameter("page");//获取页号
+		Sitequery sitequery = (Sitequery) dy.get("sitequery");
+		SitequeryBO bo = new SitequeryBO();
+		WordlibBO lib=new WordlibBO();
+		
+		List list = bo.getExcelList(sitequery);
+		TMExcel excel = TMExcel.newInstance(Constant.TEMPLATES_PARTY_BASIC_ALL_ZDDDFX_COMPANISE_TEMPLATES);
+		
+//		创建TMExcel
+		if(list!=null && !list.isEmpty()){
+			java.util.Iterator<SitequeryVO> iter = list.iterator();
+			for(int i=0;iter.hasNext();i++){
+				SitequeryVO map = iter.next();
+				//创建一行
+				excel.createRow(i);
+				//创建列
+				//excel.createCell(yx.getName());
+				excel.createCell(map.getSite()+"");
+				excel.createCell(map.getShijicishu()+"");
+				excel.createCell(map.getWentinumber()+"");
+			}
+		}
+		
+		//覆盖参数
+		Properties props = new Properties();
+		props.put("time", StringUtil.formatDate(new java.util.Date(), "yyyy-MM-dd HH:ss:mm"));
+		excel.replaceParameters(props);
+		String fileName = "zoudongdidianbaobiaofenxi_"+StringUtil.formatDate(new java.util.Date(), "yyyyMMddHHssmm")+".xls";
+		response.reset();
+		response.setContentType("application/x-msdownload;charset=GBK");
+		response.setHeader("Content-Disposition","attachment;filename="+fileName);
+
+		//将Excel文件流输出到response
+		excel.getWorkbook().write(response.getOutputStream());
+		return null;
+	}

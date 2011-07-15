@@ -1,0 +1,3 @@
+只要在action中把需要显示的数据放到request中即可
+
+request.setAttribute("yhxzfxlist", list);
