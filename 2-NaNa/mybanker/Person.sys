@@ -1,0 +1,9 @@
+[DBFile]
+DBFName=Person.mdb
+[HelpFile]
+HelpFName=ReadMe.txt
+[Version]
+Copyright=1.20
+Date=2009.12.19
+[History]
+CurrUserName=Admin
