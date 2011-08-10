@@ -1,0 +1,51 @@
+TD {
+FONT-SIZE: 12px; COLOR: #999999
+}
+TH {
+FONT-SIZE: 12px; COLOR: #999999
+}
+A {
+FONT-SIZE: 15px; COLOR: #ffffff
+}
+A:link {
+TEXT-DECORATION: none
+}
+A:visited {
+COLOR: #ffffff; TEXT-DECORATION: none
+}
+A:hover {
+COLOR: #990000; TEXT-DECORATION: none
+}
+A:active {
+COLOR: #999999; TEXT-DECORATION: none
+}
+#Layer1 {
+Z-INDEX: 1; LEFT: 206px; WIDTH: 402px; POSITION: absolute; TOP: 426px; HEIGHT: 33px
+}
+#Layer2 {
+position:absolute;
+left:0px;
+top:0px;
+width:226px;
+height:123px;
+z-index:1;
+}
+
+.STYLE7 {color: #00FF00; font-size: 9pt;}
+body,td,th {
+color: #00FF00;
+font-weight: bold;
+}
+.STYLE8 {
+font-size: 9pt;
+color: white;
+font-weight: bold;
+}
+.STYLE9 {
+font-size: 9pt;
+color: red;
+font-weight: bold;
+}
+.bb{
+background-repeat:no-repeat;
+}
