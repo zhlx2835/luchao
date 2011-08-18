@@ -1,0 +1,41 @@
+<html> 
+    <head><titel>jstest</title></head> 
+    <body>
+<script>
+//connection
+   var con = new ActiveXObject("Adodb.Connection");
+   //var strConn=   "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=c:\\jstest\\jstest.mdb";
+   var strConn = "DRIVER={Microsoft Access Driver (*.mdb)};PWD=Storm_LZS;UID=Storm_LZS; DBQ=D:\\person.mdb";
+     con.open(strConn); 
+       
+     var rs=new ActiveXObject("ADODB.Recordset"); 
+     var sqlSel="select * from Userlib"; 
+   //rs.LockType=rs.CursorType=1; 
+   rs.Open(sqlSel,con);
+  
+   //excute
+   //var sqlUpt="update Clients set name='saqsss';"
+  // con.execute(sqlUpt);
+
+
+function go(){
+   
+
+     document.write('<table><tr><td>客户名称</td><td>电话</td></tr>');   
+     while(!rs.EOF){
+         //var   userid=rs('userid');
+         //var   password=rs('password');
+		 alert(rs(0)+rs(1));
+         
+        // document.write('<tr><td>',userid,'</td><td>',password,'</td></tr>');   
+         rs.moveNext();
+     }
+     rs.close; 
+     con.close;
+     document.write('</table>');
+	 }
+</script>
+<input type="button" value="go" onclick="go()"/>
+    </body> 
+</html>
+
