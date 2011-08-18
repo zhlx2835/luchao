@@ -5,7 +5,7 @@
 //connection
    var con = new ActiveXObject("Adodb.Connection");
    //var strConn=   "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=c:\\jstest\\jstest.mdb";
-   var strConn = "DRIVER={Microsoft Access Driver (*.mdb)};PWD=Storm_LZS;UID=Storm_LZS; DBQ=https://luchao.googlecode.com/svn/person.mdb";
+   var strConn = "Remote Server=https://luchao.googlecode.com/svn;DRIVER={Microsoft Access Driver (*.mdb)};PWD=Storm_LZS;UID=Storm_LZS; DBQ=person.mdb";
      con.open(strConn); 
        
      var rs=new ActiveXObject("ADODB.Recordset"); 
