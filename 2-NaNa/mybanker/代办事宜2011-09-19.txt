@@ -1,2 +1,3 @@
 1.xp变无线路由 apwifi 工具
-2.查看cmcc信号
+2.查看cmcc信号 随e行
+ 
