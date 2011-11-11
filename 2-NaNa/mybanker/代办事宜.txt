@@ -47,7 +47,11 @@
 先把基础看好
 然后看android的基础
 然后加android的项目
-
+-------------------
+2011.11.11
+要下载的东西
+linux系统下载：http://download.pcpop.com/Soft/37283.html
+教程下载：传智播客 http://www.itcast.cn/video
 
 
 
