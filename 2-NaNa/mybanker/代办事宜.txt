@@ -100,4 +100,8 @@ tao--
 JIRA地址：http://192.168.1.34:1111/secure/Dashboard.jspa
 
 
-
+----------------------
+网卡 Marvell Yukon 88E8040 PCI-E Fast Ethernet Controller
+制造商	三星
+	
+无线网卡 英特尔 Centrino Wireless-N 130
