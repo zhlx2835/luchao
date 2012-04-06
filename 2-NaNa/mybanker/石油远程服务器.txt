@@ -35,3 +35,7 @@ hruser密码：123789		－－用于查看D盘hr组织人员同步文件
 流媒体服务器上已经安装了toad和oracle服务 
 
 数据库用户名：cnpc    密码：123456
+
+
+http://vod.e-learning.cnpc.com.cn/app/cms/group.action
+http://e-learning.cnpc.com.cn/jsp/sites/index.jsp
