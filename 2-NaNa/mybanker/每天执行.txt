@@ -1,0 +1,321 @@
+CREATE OR REPLACE PROCEDURE P_StatisticsInfo
+IS
+thisyear varchar(2);--当前的年份12
+thismonth varchar(2);--当前月份03
+monthfirstday varchar(18);--月的第一天
+yearfirstday varchar(18);--年的第一天
+strdate varchar(18);--开始时间
+enddate varchar(18);--结束时间
+sidno number;--sid
+sidcount number;--判断使用
+cursor stalist(sd varchar,ed varchar) is
+--List集合
+select cg.name,k.grp_id,k.jcs,k.jda,k.jwt,k.jzl,k.jqx,k.ccs,k.cda,k.cwt,k.czl,k.cqx from (
+select i.grp_id,i.jcs,i.jda,i.jwt,i.jzl,i.jqx,g.ccs,g.cda,g.cwt,g.czl,g.cqx from (
+select h.grp_id,h.jcs,h.jda,h.jwt,h.jzl,e.jqx from (
+select j.grp_id,j.jcs,j.jda,j.jwt,d.jzl from (
+select f.grp_id,f.jcs,f.jda,c.jwt from (
+select a.grp_id,a.jcs,b.jda from (
+select cgu.grp_id ,count(*) jcs
+ from usersession us, c_user cu,c_goup_user cgu,C_USEROTHERINFO cui
+where us.regname = cu.regname
+ and cgu.usr_id=cu.usr_id
+ and cui.usr_id=cu.usr_id
+ and cui.experttype = 10003
+ and exists (select grp_id from (select grp_id from c_group where parentid=9002 union all select grp_id from c_group where parentid in(select grp_id from c_group where parentid=9002) union all select grp_id from c_group where parentid in(select grp_id  from c_group where parentid in(select grp_id from c_group where parentid=9002))))
+ and us.sessionstart > to_date(sd, 'yyyy-mm-dd')
+ and us.sessionstart < to_date(ed, 'yyyy-mm-dd')
+ group by cgu.grp_id) a left join
+(select cgu.grp_id,count(*) jda
+from ks_answer ka,c_user cu,c_goup_user cgu,C_USEROTHERINFO cui
+  where ka.creatorid=cu.usr_id
+  and cu.usr_id=cgu.usr_id
+  and cgu.usr_id=cui.usr_id
+  and cui.experttype=10003
+  and exists (select grp_id from (select grp_id from c_group where parentid=9002 union all select grp_id from c_group where parentid in(select grp_id from c_group where parentid=9002) union all select grp_id from c_group where parentid in(select grp_id  from c_group where parentid in(select grp_id from c_group where parentid=9002))))
+  and ka.createddate > to_date(sd, 'yyyy-mm-dd')
+  and ka.createddate < to_date(ed, 'yyyy-mm-dd')
+  group by cgu.grp_id) b
+  on a.grp_id =b.grp_id) f
+  left join
+ (select cgu.grp_id,count(*) jwt
+from ks_problem kp,c_user cu,c_goup_user cgu,C_USEROTHERINFO cui
+where kp.creatorid=cu.usr_id
+and cu.usr_id=cgu.usr_id
+and cgu.usr_id=cui.usr_id
+and cui.experttype=10003
+and exists (select grp_id from (select grp_id from c_group where parentid=9002 union all select grp_id from c_group where parentid in(select grp_id from c_group where parentid=9002) union all select grp_id from c_group where parentid in(select grp_id  from c_group where parentid in(select grp_id from c_group where parentid=9002))))
+and kp.createddate > to_date(sd, 'yyyy-mm-dd')
+and kp.createddate < to_date(ed, 'yyyy-mm-dd')
+group by cgu.grp_id) c
+on f.grp_id=c.grp_id) j
+left join
+(select cgu.grp_id,count(*) jzl from ks_document kd,c_user cu,c_goup_user cgu,C_USEROTHERINFO cui
+where kd.creatorid=cu.usr_id
+and cu.usr_id=cgu.usr_id
+and cgu.usr_id=cui.usr_id
+and cui.experttype=10003
+and exists (select grp_id from (select grp_id from c_group where parentid=9002 union all select grp_id from c_group where parentid in(select grp_id from c_group where parentid=9002) union all select grp_id from c_group where parentid in(select grp_id  from c_group where parentid in(select grp_id from c_group where parentid=9002))))
+and kd.createdate> to_date(sd, 'yyyy-mm-dd')
+and kd.createdate < to_date(ed, 'yyyy-mm-dd')
+group by cgu.grp_id) d
+on j.grp_id=d.grp_id) h
+left join
+(select cgu.grp_id,count(*) jqx
+from c_user_role cur,c_userotherinfo cui,c_goup_user cgu
+where cur.usr_id=cui.usr_id
+and cgu.usr_id=cui.usr_id
+and cui.experttype=10003
+and exists (select grp_id from (select grp_id from c_group where parentid=9002 union all select grp_id from c_group where parentid in(select grp_id from c_group where parentid=9002) union all select grp_id from c_group where parentid in(select grp_id  from c_group where parentid in(select grp_id from c_group where parentid=9002))))
+and cur.createddate > to_date(sd, 'yyyy-mm-dd')
+and cur.createddate < to_date(ed, 'yyyy-mm-dd')
+group by cgu.grp_id
+) e
+on h.grp_id=e.grp_id) i
+left join (
+select h.grp_id,h.ccs,h.cda,h.cwt,h.czl,e.cqx from (
+select j.grp_id,j.ccs,j.cda,j.cwt,d.czl from (
+select f.grp_id,f.ccs,f.cda,c.cwt from (
+select a.grp_id,a.ccs,b.cda from (
+select cgu.grp_id ,count(*) ccs
+ from usersession us, c_user cu,c_goup_user cgu,C_USEROTHERINFO cui
+where us.regname = cu.regname
+ and cgu.usr_id=cu.usr_id
+ and cui.usr_id=cu.usr_id
+ and cui.experttype = 10004
+  and exists (select grp_id from (select grp_id from c_group where parentid=9002 union all select grp_id from c_group where parentid in(select grp_id from c_group where parentid=9002) union all select grp_id from c_group where parentid in(select grp_id  from c_group where parentid in(select grp_id from c_group where parentid=9002))))
+ and us.sessionstart > to_date(sd, 'yyyy-mm-dd')
+ and us.sessionstart < to_date(ed, 'yyyy-mm-dd')
+ group by cgu.grp_id) a left join
+(select cgu.grp_id,count(*) cda
+from ks_answer ka,c_user cu,c_goup_user cgu,C_USEROTHERINFO cui
+  where ka.creatorid=cu.usr_id
+  and cu.usr_id=cgu.usr_id
+  and cgu.usr_id=cui.usr_id
+  and cui.experttype=10004
+   and exists (select grp_id from (select grp_id from c_group where parentid=9002 union all select grp_id from c_group where parentid in(select grp_id from c_group where parentid=9002) union all select grp_id from c_group where parentid in(select grp_id  from c_group where parentid in(select grp_id from c_group where parentid=9002))))
+  and ka.createddate > to_date(sd, 'yyyy-mm-dd')
+  and ka.createddate < to_date(ed, 'yyyy-mm-dd')
+  group by cgu.grp_id) b
+  on a.grp_id =b.grp_id) f
+  left join
+ (select cgu.grp_id,count(*) cwt
+from ks_problem kp,c_user cu,c_goup_user cgu,C_USEROTHERINFO cui
+where kp.creatorid=cu.usr_id
+and cu.usr_id=cgu.usr_id
+and cgu.usr_id=cui.usr_id
+and cui.experttype=10004
+and exists (select grp_id from (select grp_id from c_group where parentid=9002 union all select grp_id from c_group where parentid in(select grp_id from c_group where parentid=9002) union all select grp_id from c_group where parentid in(select grp_id  from c_group where parentid in(select grp_id from c_group where parentid=9002))))
+and kp.createddate > to_date(sd, 'yyyy-mm-dd')
+and kp.createddate < to_date(ed, 'yyyy-mm-dd')
+group by cgu.grp_id) c
+on f.grp_id=c.grp_id) j
+left join
+(select cgu.grp_id,count(*) czl from ks_document kd,c_user cu,c_goup_user cgu,C_USEROTHERINFO cui
+where kd.creatorid=cu.usr_id
+and cu.usr_id=cgu.usr_id
+and cgu.usr_id=cui.usr_id
+and cui.experttype=10004
+and exists (select grp_id from (select grp_id from c_group where parentid=9002 union all select grp_id from c_group where parentid in(select grp_id from c_group where parentid=9002) union all select grp_id from c_group where parentid in(select grp_id  from c_group where parentid in(select grp_id from c_group where parentid=9002))))
+and kd.createdate> to_date(sd, 'yyyy-mm-dd')
+and kd.createdate < to_date(ed, 'yyyy-mm-dd')
+group by cgu.grp_id) d
+on j.grp_id=d.grp_id) h
+left join
+(select cgu.grp_id,count(*) cqx
+from c_user_role cur,c_userotherinfo cui,c_goup_user cgu
+where cur.usr_id=cui.usr_id
+and cgu.usr_id=cui.usr_id
+and cui.experttype=10004
+and exists (select grp_id from (select grp_id from c_group where parentid=9002 union all select grp_id from c_group where parentid in(select grp_id from c_group where parentid=9002) union all select grp_id from c_group where parentid in(select grp_id  from c_group where parentid in(select grp_id from c_group where parentid=9002))))
+and cur.createddate > to_date(sd, 'yyyy-mm-dd')
+and cur.createddate < to_date(ed, 'yyyy-mm-dd')
+group by cgu.grp_id
+) e on h.grp_id=e.grp_id
+) g on i.grp_id=g.grp_id) k,c_group cg where k.grp_id=cg.grp_id;
+--
+begin
+   --得到当前年
+   select substr(TO_CHAR(sysdate,'yyyy-mm-dd'),3,2) into thisyear from dual;
+   --得到当前月份
+   select substr(TO_CHAR(sysdate,'yyyy-mm-dd'),6,2) into thismonth from dual;
+   --本月的第一天
+   select TO_CHAR(last_day(add_months(sysdate,-1))+1,'yyyy-mm-dd') into monthfirstday from dual;
+   --本年的第一天
+   select TO_CHAR(trunc(sysdate,'yyyy'),'yyyy-mm-dd') into yearfirstday from dual;
+   --当前的日期
+   select TO_CHAR(sysdate,'yyyy-mm-dd') into enddate from dual;
+
+   DBMS_OUTPUT.put_line('当前年'||thisyear);
+   DBMS_OUTPUT.put_line('当前月份'||thismonth);
+   DBMS_OUTPUT.put_line('---日期格式需根据情况修改---'||thisyear||thismonth);
+
+   for i in 1..3 Loop
+     if i=1 then
+       DBMS_OUTPUT.put_line('---月报---');
+       strdate:=monthfirstday;--月的第一天
+       FOR rec in stalist(strdate,enddate) Loop
+           DBMS_OUTPUT.put_line(rec.grp_id||'----'||rec.jcs);
+           DBMS_OUTPUT.put_line('------rec.grp_id-------'||rec.grp_id||'----datadate--'||thisyear||thismonth);
+
+           select count(*) into sidcount from statistics where group_id=rec.grp_id and datadate=thisyear||thismonth;
+
+           if sidcount=0 then
+              DBMS_OUTPUT.put_line('------执行月报添加操作------------');
+              --添加
+              insert into statistics values(c_tableseq_seq.nextval,rec.grp_id,1,thisyear||thismonth,rec.jqx,rec.jcs,rec.jzl,rec.jwt,rec.jda,rec.cqx,rec.ccs,rec.czl,rec.cwt,rec.cda);
+              commit;
+           else
+              sidno:='';
+              select sid into sidno from statistics where group_id=rec.grp_id and datadate=thisyear||thismonth;
+              DBMS_OUTPUT.put_line('------执行月报修改操作-----sidno:'||sidno);
+              --更新
+              update statistics set groupauthority=rec.jqx,grouplogin=rec.jcs,groupsource=rec.jzl,grouppoblem=rec.jwt,groupanswer=rec.jda,companyauthority=rec.cqx,companylogin=rec.ccs,companysource=rec.czl,companypoblem=rec.cwt,companyanswer=rec.cda where sid=sidno;
+              commit;
+           end if;
+       end Loop;
+
+       DBMS_OUTPUT.put_line('月报开始时间'||strdate);
+       DBMS_OUTPUT.put_line('月报结束时间'||enddate);
+     elsif i=2 then
+       DBMS_OUTPUT.put_line('---季报---');
+       --判断月份
+       if thismonth='01' or thismonth='02' or thismonth='03' then
+          DBMS_OUTPUT.put_line('---1季度 季报---');
+          strdate:=yearfirstday;--1季度的第一天就是年的第一天
+
+          FOR rec in stalist(strdate,enddate) Loop
+               DBMS_OUTPUT.put_line(rec.grp_id||'----'||rec.jcs);
+               DBMS_OUTPUT.put_line('------rec.grp_id-------'||rec.grp_id||'----datadate--'||thisyear||1);
+
+               select count(*) into sidcount from statistics where group_id=rec.grp_id and datadate=thisyear||1;
+
+               if sidcount=0 then
+                  DBMS_OUTPUT.put_line('------执行1季度 季报添加操作------------');
+                  --添加
+                  insert into statistics values(c_tableseq_seq.nextval,rec.grp_id,2,thisyear||1,rec.jqx,rec.jcs,rec.jzl,rec.jwt,rec.jda,rec.cqx,rec.ccs,rec.czl,rec.cwt,rec.cda);
+                  commit;
+               else
+                  sidno:='';
+                  select sid into sidno from statistics where group_id=rec.grp_id and datadate=thisyear||1;
+                  DBMS_OUTPUT.put_line('------执行1季度 季报修改操作-----sidno:'||sidno);
+                  --更新
+                  update statistics set groupauthority=rec.jqx,grouplogin=rec.jcs,groupsource=rec.jzl,grouppoblem=rec.jwt,groupanswer=rec.jda,companyauthority=rec.cqx,companylogin=rec.ccs,companysource=rec.czl,companypoblem=rec.cwt,companyanswer=rec.cda where sid=sidno;
+                  commit;
+               end if;
+          end Loop;
+          DBMS_OUTPUT.put_line('1季度 季报开始时间'||strdate);
+          DBMS_OUTPUT.put_line('1季度 季报结束时间'||enddate);
+       elsif thismonth='04' or thismonth='05' or thismonth='06' then
+          DBMS_OUTPUT.put_line('---2季度 季报---');
+          strdate:=20||thisyear||'-'||'04'||'-'||'01';--2季度的第一天就是4月的第一天
+
+          FOR rec in stalist(strdate,enddate) Loop
+              DBMS_OUTPUT.put_line(rec.grp_id||'----'||rec.jcs);
+              DBMS_OUTPUT.put_line('------rec.grp_id-------'||rec.grp_id||'----datadate--'||thisyear||2);
+
+              select count(*) into sidcount from statistics where group_id=rec.grp_id and datadate=thisyear||2;
+
+              if sidcount=0 then
+                 DBMS_OUTPUT.put_line('------执行2季度 季报添加操作------------');
+                 --添加
+                 insert into statistics values(c_tableseq_seq.nextval,rec.grp_id,2,thisyear||2,rec.jqx,rec.jcs,rec.jzl,rec.jwt,rec.jda,rec.cqx,rec.ccs,rec.czl,rec.cwt,rec.cda);
+                 commit;
+              else
+                 sidno:='';
+                 select sid into sidno from statistics where group_id=rec.grp_id and datadate=thisyear||2;
+                 DBMS_OUTPUT.put_line('------执行2季度 季报修改操作-----sidno:'||sidno);
+                 --更新
+                 update statistics set groupauthority=rec.jqx,grouplogin=rec.jcs,groupsource=rec.jzl,grouppoblem=rec.jwt,groupanswer=rec.jda,companyauthority=rec.cqx,companylogin=rec.ccs,companysource=rec.czl,companypoblem=rec.cwt,companyanswer=rec.cda where sid=sidno;
+                 commit;
+              end if;
+          end Loop;
+
+          DBMS_OUTPUT.put_line('2季度 季报开始时间'||strdate);
+          DBMS_OUTPUT.put_line('2季度 季报结束时间'||enddate);
+       elsif thismonth='07' or thismonth='08' or thismonth='09' then
+          DBMS_OUTPUT.put_line('---3季度 季报---');
+          strdate:=20||thisyear||'-'||'07'||'-'||'01';--3季度的第一天就是7月的第一天
+
+          FOR rec in stalist(strdate,enddate) Loop
+              DBMS_OUTPUT.put_line(rec.grp_id||'----'||rec.jcs);
+              DBMS_OUTPUT.put_line('------rec.grp_id-------'||rec.grp_id||'----datadate--'||thisyear||3);
+
+              select count(*) into sidcount from statistics where group_id=rec.grp_id and datadate=thisyear||3;
+
+              if sidcount=0 then
+                 DBMS_OUTPUT.put_line('------执行3季度 季报添加操作------------');
+                 --添加
+                 insert into statistics values(c_tableseq_seq.nextval,rec.grp_id,2,thisyear||3,rec.jqx,rec.jcs,rec.jzl,rec.jwt,rec.jda,rec.cqx,rec.ccs,rec.czl,rec.cwt,rec.cda);
+                 commit;
+              else
+                 sidno:='';
+                 select sid into sidno from statistics where group_id=rec.grp_id and datadate=thisyear||3;
+                 DBMS_OUTPUT.put_line('------执行3季度 季报修改操作-----sidno:'||sidno);
+                 --更新
+                 update statistics set groupauthority=rec.jqx,grouplogin=rec.jcs,groupsource=rec.jzl,grouppoblem=rec.jwt,groupanswer=rec.jda,companyauthority=rec.cqx,companylogin=rec.ccs,companysource=rec.czl,companypoblem=rec.cwt,companyanswer=rec.cda where sid=sidno;
+                 commit;
+              end if;
+          end Loop;
+
+          DBMS_OUTPUT.put_line('3季度 季报开始时间'||strdate);
+          DBMS_OUTPUT.put_line('3季度 季报结束时间'||enddate);
+       elsif thismonth='10' or thismonth='11' or thismonth='12' then
+          DBMS_OUTPUT.put_line('---4季度 季报---');
+          strdate:=20||thisyear||'-'||'10'||'-'||'01';--4季度的第一天就是10月的第一天
+
+          FOR rec in stalist(strdate,enddate) Loop
+              DBMS_OUTPUT.put_line(rec.grp_id||'----'||rec.jcs);
+              DBMS_OUTPUT.put_line('------rec.grp_id-------'||rec.grp_id||'----datadate--'||thisyear||4);
+
+              select count(*) into sidcount from statistics where group_id=rec.grp_id and datadate=thisyear||4;
+
+              if sidcount=0 then
+                 DBMS_OUTPUT.put_line('------执行4季度 季报添加操作------------');
+                 --添加
+                 insert into statistics values(c_tableseq_seq.nextval,rec.grp_id,2,thisyear||4,rec.jqx,rec.jcs,rec.jzl,rec.jwt,rec.jda,rec.cqx,rec.ccs,rec.czl,rec.cwt,rec.cda);
+                 commit;
+              else
+                 sidno:='';
+                 select sid into sidno from statistics where group_id=rec.grp_id and datadate=thisyear||4;
+                 DBMS_OUTPUT.put_line('------执行4季度 季报修改操作-----sidno:'||sidno);
+                 --更新
+                 update statistics set groupauthority=rec.jqx,grouplogin=rec.jcs,groupsource=rec.jzl,grouppoblem=rec.jwt,groupanswer=rec.jda,companyauthority=rec.cqx,companylogin=rec.ccs,companysource=rec.czl,companypoblem=rec.cwt,companyanswer=rec.cda where sid=sidno;
+                 commit;
+              end if;
+          end Loop;
+
+          DBMS_OUTPUT.put_line('4季度 季报开始时间'||strdate);
+          DBMS_OUTPUT.put_line('4季度 季报结束时间'||enddate);
+       end if;
+     elsif i=3 then
+       DBMS_OUTPUT.put_line('-----年报----');
+       strdate:=yearfirstday;--年的第一天
+       FOR rec in stalist(strdate,enddate) Loop
+          --DBMS_OUTPUT.put_line('grp_id---'||rec.grp_id||'---jqx---'||rec.jqx||'---jcs---'||rec.jcs||'---jzl---'||rec.jzl||'---jwt---'||rec.jwt||'---jda---'||rec.jda||'---');
+          select count(*) into sidcount from statistics where group_id=rec.grp_id and datadate=thisyear;
+
+          if sidcount=0 then
+             DBMS_OUTPUT.put_line('------执行年报 添加操作------------');
+             --添加
+             insert into statistics (sid,group_id,type,datadate,groupauthority,grouplogin,groupsource,grouppoblem,groupanswer,companyauthority,companylogin,companysource,companypoblem,companyanswer) values(c_tableseq_seq.nextval,rec.grp_id,3,thisyear,rec.jqx,rec.jcs,rec.jzl,rec.jwt,rec.jda,rec.cqx,rec.ccs,rec.czl,rec.cwt,rec.cda);
+             commit;
+          else
+             sidno:='';
+             select sid into sidno from statistics where group_id=rec.grp_id and datadate=thisyear;
+             DBMS_OUTPUT.put_line('------执行年报 修改操作-----sidno:'||sidno);
+             --更新
+             update statistics set groupauthority=rec.jqx,grouplogin=rec.jcs,groupsource=rec.jzl,grouppoblem=rec.jwt,groupanswer=rec.jda,companyauthority=rec.cqx,companylogin=rec.ccs,companysource=rec.czl,companypoblem=rec.cwt,companyanswer=rec.cda where sid=sidno;
+             commit;
+          end if;
+       end Loop;
+       DBMS_OUTPUT.put_line('开始时间'||strdate);
+       DBMS_OUTPUT.put_line('结束时间'||enddate);
+     end if;
+   end Loop;
+
+   exception
+   when others then
+   DBMS_OUTPUT.put_line('error');
+   rollback;
+end;
