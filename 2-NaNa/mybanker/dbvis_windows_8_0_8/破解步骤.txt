@@ -1,0 +1,9 @@
+破解所需文件：dbvis.license、dbvis.puk这2个文件
+
+DbVisualizer破解方法如下：
+第一步：把下载的dbvis.puk文件,替换掉安装目录“D:\Program Files\DbVisualizer-6.0.12\lib”下dbvis.jar里面的这个文件dbvis.puk。
+第二步：然后打开软件，选择Help=》License Key ,然后下载导入dbvis.license文件。
+第三步：重起一下软件就OK了
+
+如果不破解，使用时会报错“Selection executes are not allowed in DbVisualizer Free! ”
+
