@@ -1,3 +1,6 @@
+提示错误信息“selection executes are supported only in the dbvisualizer personal edition”  选择执行的支持只有在dbvisualizer个人版
+
+
 破解所需文件：dbvis.license、dbvis.puk这2个文件
 
 DbVisualizer破解方法如下：
