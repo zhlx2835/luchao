@@ -1,0 +1,402 @@
+
+<%
+// read request parameters
+ArrayList alExpandedCatID = updateExpandedCatIDList(session, service);
+String sSelectedCatID 		= getSelectedCatID(session, service);
+
+// get category hierarchy, either from session if it there or by reading from Laune if it isn't
+Category topCategory = getCategoryHierarchy(session, service, rb);
+
+// if we have a category hierarchy, display it
+if(topCategory != null)
+{
+%>
+	<script name="JavaScript" type="text/javascript">
+	<!--
+		function submitSelectNode(id)
+		{
+			document.selectNode.<%= service.makeParameterName(CATConstants.REQUEST_PARAM_SELECTED_ID) %>.value=id;
+
+			document.selectNode.submit();
+		}
+
+		function submitExpandNode(id)
+		{
+			document.expandNode.<%= service.makeParameterName(CATConstants.REQUEST_PARAM_EXPAND_CONTRACT_ID) %>.value=id;
+
+			document.expandNode.submit();
+		}
+
+		function submitContractNode(id)
+		{
+			document.contractNode.<%= service.makeParameterName(CATConstants.REQUEST_PARAM_EXPAND_CONTRACT_ID) %>.value=id;
+
+			document.contractNode.submit();
+		}
+
+		function reloadHier()
+		{
+			document.reload.submit();
+		}
+	-->
+	</script>
+
+	<form name="selectNode" action="<%= service.makeFormActionLink("") %>" method="POST">
+		<%= service.makeAbstractFormFields() %>
+		<input type="hidden" name="<%= service.makeParameterName(CATConstants.REQUEST_PARAM_PAGE) %>" value="<%= CATConstants.JSP_PAGE_CAT_SELECTED %>" />
+		<input type="hidden" name="<%= service.makeParameterName(CATConstants.REQUEST_PARAM_SELECTED_ID) %>" value="" />
+	</form>
+	<form name="expandNode" action="<%= service.makeFormActionLink("") %>" method="POST">
+		<%= service.makeAbstractFormFields() %>
+		<input type="hidden" name="<%= service.makeParameterName(CATConstants.REQUEST_PARAM_ACTION) %>" value="<%= CATConstants.CAT_ACTION_EXPAND %>" />
+		<input type="hidden" name="<%= service.makeParameterName(CATConstants.REQUEST_PARAM_PAGE) %>" value="<%= sMainPage %>" />
+		<input type="hidden" name="<%= service.makeParameterName(CATConstants.REQUEST_PARAM_EXPAND_CONTRACT_ID) %>" value="" />
+	</form>
+	<form name="contractNode" action="<%= service.makeFormActionLink("") %>" method="POST">
+		<%= service.makeAbstractFormFields() %>
+		<input type="hidden" name="<%= service.makeParameterName(CATConstants.REQUEST_PARAM_ACTION) %>" value="<%= CATConstants.CAT_ACTION_CONTRACT %>" />
+		<input type="hidden" name="<%= service.makeParameterName(CATConstants.REQUEST_PARAM_PAGE) %>" value="<%= sMainPage %>" />
+		<input type="hidden" name="<%= service.makeParameterName(CATConstants.REQUEST_PARAM_EXPAND_CONTRACT_ID) %>" value="" />
+	</form>
+	<form name="reload" action="<%= service.makeFormActionLink("") %>" method="POST">
+		<%= service.makeAbstractFormFields() %>
+		<input type="hidden" name="<%= service.makeParameterName(CATConstants.REQUEST_PARAM_PAGE) %>" value="<%= CATConstants.JSP_PAGE_RELOAD_CATS %>" />
+	</form>
+	<table>
+		<tr>
+			<td nowrap="nowrap">
+				<%=rb.getString("categoryTree_include.categories")%>
+			</td>
+		</tr>
+		<%=	printChildLevel(topCategory,
+												sSelectedCatID,
+												alExpandedCatID,
+												0,
+												service.makeLink("AutonomyImages"),
+												service.makeFormActionLink(""),
+												service,
+												sMainPage,
+												session,
+                                                rb
+											 ) %>
+		<tr><td height="6" /></tr>
+		<tr>
+			<td>
+				<a href="javascript:reloadHier();"><%=rb.getString("categoryTree_include.reloadHier")%></a>
+			</td>
+		</tr>
+	</table>
+<%
+}
+// if no category hierarchy, display error message
+else
+{
+	out.println(rb.getString("categoryTree_include.couldNotLoad"));
+}
+%>
+
+<%!
+public String printChildLevel(Category category,
+															String sSelectedCatID,
+															ArrayList alExpandedCatID,
+															int nLevel,
+															String sImageURL,
+															String sDisplayURI,
+															PortalService service,
+															String sMainPage,
+															HttpSession session,
+                                                            ResourceBundle rb
+														 ) throws UnsupportedEncodingException
+{
+	StringBuffer sbReturn = new StringBuffer();
+
+	if (category != null)
+	{
+		String sName 							= category.getName();
+		String sID 								= category.getUID();
+		String sCatStatus 				= category.getStatus();
+		ArrayList alSubCategories = category.getSubCategories();
+		boolean bExpanded		= alExpandedCatID.contains(sID);
+
+		// if there are no sub-categories it may be because they have not been read in from IDOL so
+		// try to read them now
+		if(alSubCategories.size() == 0)
+		{
+			alSubCategories = readCatHierarchy(session, category, service, rb).getSubCategories();
+			// set sub-cats on category so we don't have to read them again
+			category.setSubCategories(alSubCategories);
+		}
+
+		// start row for this category
+		sbReturn.append("<tr><td nowrap=\"nowrap\">");
+		// indent
+		for (int ii=0; ii<nLevel; ii++)
+		{
+			sbReturn.append("&nbsp;&nbsp;&nbsp;&nbsp;");
+		}
+
+		// expand/contract icon
+		boolean bIsHomeCategory = sID.equals("0");
+		if(alSubCategories.size() > 0 && !bIsHomeCategory)
+		{
+			if(bExpanded)
+			{
+				sbReturn.append("<a href=\"").append("javascript:submitContractNode(\'").append(sID).append("\');\">")
+									.append("<img src=\"").append(sImageURL).append("/contract.gif\" border=\"0\" alt=\"Expand this category\" >")
+								.append("</a>");
+			}
+			else
+			{
+				sbReturn.append("<a href=\"javascript:submitExpandNode(\'").append(sID).append("\');\">")
+									.append("<img src=\"").append(sImageURL).append("/expand.gif\" border=\"0\" alt=\"Contract this category\" >")
+								.append("</a>");
+			}
+		}
+		else
+		{
+			sbReturn.append("<img src=\"").append(sImageURL).append("/nochildren.gif\" border=\"0\">");
+		}
+
+		boolean bSelected 		= sID.equals(sSelectedCatID);
+		String sFontStyle 		= (bSelected)?(" style=\";font-weight:bold\" "):("");
+		String sFolderImage 	= getFolderImageFromStatus(sCatStatus, sImageURL);
+		String sFolderToolTip = getFolderToolTipFromStatus(sCatStatus);
+
+		StringBuffer sbCatMovingJavaScript = new StringBuffer();
+
+/*
+NOT CURRENTLY IMPLEMENTED
+		sbCatMovingJavaScript.append(" class=\"dragable\" id=\"").append(sID)
+												 .append("\" onClick=\"javascript:return linkMouseUp()\" ")
+												 .append("onMouseOver=\"javascript:mouseOver(this)\" ");
+*/
+		sbReturn.append("<a ").append(sFontStyle).append(sbCatMovingJavaScript.toString())
+						.append("href=\"javascript:submitSelectNode(\'").append(sID).append("\');\">")
+							.append("<img border=\"0\" src=\"").append(sFolderImage).append("\" alt=\"").append(sFolderToolTip).append("\" />")
+							.append("&nbsp;").append(sName).append("</a>");
+
+		// finish category row
+		sbReturn.append("</td></tr>\n");
+
+		// recurse through children if category has been expanded
+		if(bExpanded)
+		{
+			Iterator itSubCategories = category.getSubCategories().iterator();
+			while(itSubCategories.hasNext())
+			{
+				sbReturn.append(printChildLevel((Category)itSubCategories.next(),
+																				sSelectedCatID,
+																				alExpandedCatID,
+																				nLevel + 1,
+																				sImageURL,
+																				sDisplayURI,
+																				service,
+																				sMainPage,
+																				session,
+                                                                                rb
+																			 ));
+			}
+		}
+	}
+
+	return sbReturn.toString();
+}
+
+private String getFolderToolTipFromStatus(String sStatus)
+{
+	String sToolTip = "Active";
+	if(sStatus != null)
+	{
+		if(sStatus.equals("CheckedOut"))
+		{
+			sToolTip = "Checked out for edit";
+		}
+		else if(sStatus.equals("Rejected"))
+		{
+			sToolTip = "Rejected by moderator";
+		}
+		else if(sStatus.equals("Pending"))
+		{
+			sToolTip = "Awaiting moderation";
+		}
+	}
+	return sToolTip;
+}
+
+private String getFolderImageFromStatus(String sStatus, String sImageURL)
+{
+	String sFolder = "folder.gif";
+	if(sStatus != null)
+	{
+		if(sStatus.equals("CheckedOut"))
+		{
+			sFolder = "folder_blue.gif";
+		}
+		else if(sStatus.equals("Rejected"))
+		{
+			sFolder = "folder_red.gif";
+		}
+		else if(sStatus.equals("Pending"))
+		{
+			sFolder = "folder_green.gif";
+		}
+	}
+	return sImageURL + "/" + sFolder;
+}
+
+private String getSelectedCatID(HttpSession session, PortalService service)
+{
+	// ID comes from either request or category session attribute, with request value overriding session value
+	String sSelectedCatID = service.getSafeRequestParameter(service.makeParameterName(CATConstants.REQUEST_PARAM_SELECTED_ID), "");
+	if(!StringUtils.strValid(sSelectedCatID))
+	{
+		// no ID in request, read ID from category in session if there is one
+		Category selectedCategory = (Category)session.getAttribute(CATConstants.SESSION_ATTRIB_SELECTED_CAT);
+		if(selectedCategory != null)
+		{
+			sSelectedCatID = selectedCategory.getUID();
+		}
+	}
+	// default to home category
+	if(sSelectedCatID == null)
+	{
+		sSelectedCatID = "0";
+	}
+	return sSelectedCatID;
+}
+
+private ArrayList updateExpandedCatIDList(HttpSession session, PortalService service)
+{
+	ArrayList alExpandedCatIDs = null;
+
+	// are we expanding or contracting a category?
+	String sCatID  = service.getSafeRequestParameter(service.makeParameterName(CATConstants.REQUEST_PARAM_EXPAND_CONTRACT_ID), "");
+	String sAction = service.getSafeRequestParameter(service.makeParameterName(CATConstants.REQUEST_PARAM_ACTION), "");
+
+	if(sAction.equals(CATConstants.CAT_ACTION_EXPAND))
+	{
+		alExpandedCatIDs = addCategoryToExpandedList(session, sCatID);
+	}
+	else if(sAction.equals(CATConstants.CAT_ACTION_CONTRACT))
+	{
+		alExpandedCatIDs = removeCategoryFromExpandedList(session, sCatID);
+	}
+	else
+	{
+		alExpandedCatIDs = (ArrayList)session.getAttribute(CATConstants.SESSION_ATTRIB_EXPANDED_CAT_IDS);
+	}
+	// make sure the list is not null
+	if(alExpandedCatIDs == null)
+	{
+		alExpandedCatIDs = initialiseExpandedList();
+	}
+	// set on session and return
+	session.setAttribute(CATConstants.SESSION_ATTRIB_EXPANDED_CAT_IDS, alExpandedCatIDs);
+
+	return alExpandedCatIDs;
+}
+
+private ArrayList removeCategoryFromExpandedList(HttpSession session, String sCatID)
+{
+	// get expanded cat list from session, create new list if none found
+	ArrayList alExpandedCatIDs = (ArrayList)session.getAttribute(CATConstants.SESSION_ATTRIB_EXPANDED_CAT_IDS);
+	if(alExpandedCatIDs != null)
+	{
+		// add cat id to expanded list if not already there
+		if(alExpandedCatIDs.contains(sCatID))
+		{
+			alExpandedCatIDs.remove(sCatID);
+		}
+
+		// set updated list on session
+		session.setAttribute(CATConstants.SESSION_ATTRIB_EXPANDED_CAT_IDS, alExpandedCatIDs);
+	}
+
+	return alExpandedCatIDs;
+}
+
+private ArrayList addCategoryToExpandedList(HttpSession session, String sCatID)
+{
+	// get expanded cat list from session, create new list if none found
+	ArrayList alExpandedCatIDs = (ArrayList)session.getAttribute(CATConstants.SESSION_ATTRIB_EXPANDED_CAT_IDS);
+	if(alExpandedCatIDs != null)
+	{
+		// add cat id to expanded list if not already there
+		if(!alExpandedCatIDs.contains(sCatID))
+		{
+			alExpandedCatIDs.add(sCatID);
+		}
+
+		// set updated list on session
+		session.setAttribute(CATConstants.SESSION_ATTRIB_EXPANDED_CAT_IDS, alExpandedCatIDs);
+	}
+
+	return alExpandedCatIDs;
+}
+
+private ArrayList initialiseExpandedList()
+{
+	ArrayList alExpandedCatIDs = new ArrayList();
+	// always expand the home category
+	alExpandedCatIDs.add(Category.HOME_CATEGORY_ID);
+	return alExpandedCatIDs;
+}
+
+private Category getCategoryHierarchy(HttpSession session, PortalService service, ResourceBundle rb) throws UnsupportedEncodingException
+{
+	// read category hierarchy from session, read new cat hierarchy from Laune if none found
+	Category catHierarchy = (Category)session.getAttribute(CATConstants.SESSION_ATTRIB_CAT_HIERARCHY);
+
+	if(catHierarchy == null)
+	{
+		// no cat hierarchy set on session so read top most from Laune
+		catHierarchy = readCatHierarchy(session, new Category("0"), service, rb);
+	}
+	if(catHierarchy != null)
+	{
+		session.setAttribute(CATConstants.SESSION_ATTRIB_CAT_HIERARCHY, catHierarchy);
+	}
+
+	return catHierarchy;
+}
+
+private Category readCatHierarchy(HttpSession session, Category category, PortalService service, ResourceBundle rb) throws UnsupportedEncodingException
+{
+	Category catTree = null;
+	// retrieve IDOL service from session
+	IDOLService idol = (IDOLService)session.getAttribute(CATConstants.SESSION_ATTRIB_IDOL);
+    // Get user details
+    String sUsername = (service.getUser()).getName();
+
+	if(idol != null)
+	{
+		try
+		{
+			catTree = idol.useChannelsFunctionality().getCategoryHierarchy(category, false, sUsername);
+		}
+		catch(InvalidCategoryException ice)
+		{
+		 	// root category is invalid!
+			setError(session, rb.getString("categoryTree_include.error.launeCorrupted"));
+		}
+		catch(AciException acie)
+		{
+		 	// root category is invalid!
+			setError(session, rb.getString("categoryTree_include.error.launeCommProblem") + acie.getMessage());
+		}
+	}
+	else
+	{
+		setError(session, rb.getString("categoryView.error.noChFuncAvailable"));
+	}
+	return catTree;
+}
+
+private void mylog(String s)
+{
+	System.out.println(s);
+}
+%>
+
+
+

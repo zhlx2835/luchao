@@ -1,0 +1,231 @@
+<%
+/*
+Displays the document batches that are available for this query
+Required variables:
+BatchedResultPages resultPages - the set of batched pages to display
+*/
+%>
+
+<%@ page import="com.autonomy.utilities.StringUtils"%>
+
+<%@ page import="java.util.ArrayList"%>
+<%@ page import="java.util.Iterator"%>
+<%
+// batch limits
+int currentBatchIndex = resultPages.getCurrentPageIndex() + 1;
+int batchSize = resultPages.getBatchSize();
+int totalHitCnt = resultPages.getTotalHits();
+
+// which batches are we displaying links for?
+Iterator batchesToDisplay = calculateBatches(totalHitCnt, batchSize, currentBatchIndex).iterator();
+
+// form name is used many times so it's worth recording it here
+String batchFormName = service.makeFormName(RetrievalConstants.BATCH_FORM_NAME);
+String showBatchIndexParamName = service.makeParameterName(RetrievalConstants.REQUEST_PARAM_BATCH_START);
+
+// query text used in the batch form must be the same as in displayQueryForm.jsp - it is
+// overidden by query expansion path if present
+String queryText = service.getRequestParameter(service.makeParameterName(RetrievalConstants.REQUEST_PARAM_EXPANSION_PATH));
+if(!StringUtils.strValid(queryText) || getBrowsingType(service).equalsIgnoreCase("DynamicClustering") || getBrowsingType(service).equalsIgnoreCase("DynamicThesaurus") || getBrowsingType(service).equalsIgnoreCase("AQG"))
+{
+	queryText = service.getSafeRequestParameter(service.makeParameterName(RetrievalConstants.REQUEST_PARAM_QUERY_TEXT), "");
+}
+%>
+
+
+<table>
+	<!-- result document numbers -->
+	<tr>
+		<td>
+			<font class="normalbold">
+				<%= resultPages.getCurrentBatchStart() %> - <%= resultPages.getCurrentBatchEnd() %> <%=rb.getString("displayNavigationBar_include.resultDocNo.of")%> <%= totalHitCnt %> <%=rb.getString("displayNavigationBar_include.resultDocNo.results")%>
+			</font>
+		</td>
+	</tr>
+	<!-- batch numbers and links -->
+	<tr>
+		<td>
+<%
+			int previousBatchIndex = currentBatchIndex - 1;
+			if(previousBatchIndex > 0)
+			{
+%>
+				<a href="javascript:resultsNavigate(<%= previousBatchIndex %>);"><%=rb.getString("displayNavigationBar_include.previous")%></a>
+<%
+			}
+			else
+			{
+%>
+				<%=rb.getString("displayNavigationBar_include.previous")%>
+<%
+			}
+%>
+			&nbsp;&nbsp;
+<%
+			while(batchesToDisplay.hasNext())
+			{
+				Batch batch = (Batch)batchesToDisplay.next();
+				if(batch.isCurrent)
+				{
+%>
+					<font class="normalbold"><%= batch.index %></font>
+<%
+				}
+				else
+				{
+%>
+					<a href="javascript:resultsNavigate(<%= batch.index %>);"><%= batch.index %></a>
+<%
+				}
+			}
+%>
+			&nbsp;&nbsp;
+<%
+			int nextBatchIndex = currentBatchIndex + 1;
+			if(nextBatchIndex <= resultPages.getTotalNumberOfPages())
+			{
+%>
+				<a href="javascript:resultsNavigate(<%= nextBatchIndex %>);"><%=rb.getString("displayNavigationBar_include.next")%></a>
+<%
+			}
+			else
+			{
+%>
+				<%=rb.getString("displayNavigationBar_include.next")%>
+<%
+			}
+%>
+		</td>
+	</tr>
+</table>
+<!-- form for results navigation: must repeat all the parameters that were used for
+		 the original query so that the selections can be displayed in the query form -->
+<form name="<%= batchFormName %>" action="<%= service.makeFormActionLink(" ") %>queryResultsTop" method="post">
+	<%= service.makeAbstractFormFields() %>
+	<input type="hidden" name="<%= service.makeParameterName(RetrievalConstants.REQUEST_PARAM_PAGE) %>" 					value="<%= RetrievalConstants.JSP_PAGE_CHANGE_BATCH %>"/>
+	<input type="hidden" name="<%= service.makeParameterName(RetrievalConstants.REQUEST_PARAM_NUM_RESULTS) %>" 		value="<%= service.getSafeRequestParameter(service.makeParameterName(RetrievalConstants.REQUEST_PARAM_NUM_RESULTS), "") %>"/>
+	<input type="hidden" name="<%= service.makeParameterName(RetrievalConstants.REQUEST_PARAM_THRESHOLD) %>" 			value="<%= service.getSafeRequestParameter(service.makeParameterName(RetrievalConstants.REQUEST_PARAM_THRESHOLD), "") %>"/>
+	<input type="hidden" name="<%= service.makeParameterName(RetrievalConstants.REQUEST_PARAM_USE_DATE) %>" 			value="<%= service.getSafeRequestParameter(service.makeParameterName(RetrievalConstants.REQUEST_PARAM_USE_DATE), "") %>"/>
+	<input type="hidden" name="<%= service.makeParameterName(RetrievalConstants.REQUEST_PARAM_USE_FROM_DAY) %>" 	value="<%= service.getSafeRequestParameter(service.makeParameterName(RetrievalConstants.REQUEST_PARAM_USE_FROM_DAY), "") %>"/>
+	<input type="hidden" name="<%= service.makeParameterName(RetrievalConstants.REQUEST_PARAM_USE_FROM_MONTH) %>" value="<%= service.getSafeRequestParameter(service.makeParameterName(RetrievalConstants.REQUEST_PARAM_USE_FROM_MONTH), "") %>"/>
+	<input type="hidden" name="<%= service.makeParameterName(RetrievalConstants.REQUEST_PARAM_USE_FROM_YEAR) %>" 	value="<%= service.getSafeRequestParameter(service.makeParameterName(RetrievalConstants.REQUEST_PARAM_USE_FROM_YEAR), "") %>"/>
+	<input type="hidden" name="<%= service.makeParameterName(RetrievalConstants.REQUEST_PARAM_USE_TO_DAY) %>" 		value="<%= service.getSafeRequestParameter(service.makeParameterName(RetrievalConstants.REQUEST_PARAM_USE_TO_DAY), "") %>"/>
+	<input type="hidden" name="<%= service.makeParameterName(RetrievalConstants.REQUEST_PARAM_USE_TO_MONTH) %>" 	value="<%= service.getSafeRequestParameter(service.makeParameterName(RetrievalConstants.REQUEST_PARAM_USE_TO_MONTH), "") %>"/>
+	<input type="hidden" name="<%= service.makeParameterName(RetrievalConstants.REQUEST_PARAM_USE_TO_YEAR) %>" 		value="<%= service.getSafeRequestParameter(service.makeParameterName(RetrievalConstants.REQUEST_PARAM_USE_TO_YEAR), "") %>"/>
+	<input type="hidden" name="<%= service.makeParameterName(RetrievalConstants.REQUEST_PARAM_SORT_BY) %>" 				value="<%= service.getSafeRequestParameter(service.makeParameterName(RetrievalConstants.REQUEST_PARAM_SORT_BY), "") %>"/>
+	<input type="hidden" name="<%= showBatchIndexParamName %>" value="1"/>
+<%
+	// write out query text and selected info sources
+	String[] selectedInfoSources = service.getRequestParameterValues(service.makeParameterName(RetrievalConstants.REQUEST_PARAM_INFO_SOURCES));
+	for(int sourceIdx = 0; sourceIdx < selectedInfoSources.length; sourceIdx++)
+	{
+%>
+		<input type="hidden" name="<%= service.makeParameterName(RetrievalConstants.REQUEST_PARAM_INFO_SOURCES) %>" value="<%= StringUtils.XMLEscape(selectedInfoSources[sourceIdx]) %>"/>
+<%
+	}
+%>
+		<input type="hidden" name="<%= service.makeParameterName(RetrievalConstants.REQUEST_PARAM_QUERY_TEXT) %>" value="<%= StringUtils.XMLEscape(queryText) %>"/>
+<!--
+		<input type="hidden" name="<%= service.makeParameterName(RetrievalConstants.REQUEST_PARAM_QUERY_TEXT) %>" value='<%= service.getSafeRequestParameter(service.makeParameterName(RetrievalConstants.REQUEST_PARAM_QUERY_TEXT), "") %>'/>
+-->
+</form>
+<!-- javascript for submitting results navigation form -->
+<script type="text/javascript">
+	//<!-- hide script
+	function resultsNavigate(index)
+	{
+		document['<%= batchFormName %>']['<%= showBatchIndexParamName %>']['value'] = index;
+		document['<%= batchFormName %>'].submit();
+	}
+	//end hide script-->
+</script>
+
+
+<%!
+
+private static String getBrowsingType(PortalService service)
+{
+	String browsingType = service.readConfigParameter("QuerySummaryType", null);
+
+	if(browsingType == null)
+	{
+		// Old config parameter name
+		browsingType = service.readConfigParameter("ResultBrowsingType", "");
+	}
+
+	return browsingType;
+}
+
+private static final int NUM_BATCHES_TO_DISPLAY = 10;
+private ArrayList calculateBatches(int totalHitCnt, int batchSize, int currentBatchIndex)
+{
+	ArrayList batches = new ArrayList();
+
+	int firstDisplayBatch = 1;
+	int lastDisplayBatch = 1;
+
+	// determine which batches we want to display -
+	// 1) never want to display more that 10 batches at a time
+	// 2) try to keep the current batch 'centered' relative to the range of batches displayed
+	int batchCnt = 0;
+	if(totalHitCnt <= batchSize)
+	{
+		batchCnt = 1;
+	}
+	else
+	{
+		batchCnt = totalHitCnt/batchSize + ((totalHitCnt%batchSize > 0) ? 1 : 0);
+	}
+
+	if(batchCnt < NUM_BATCHES_TO_DISPLAY+1)
+	{
+		firstDisplayBatch = 1;
+		lastDisplayBatch = batchCnt + 1;
+	}
+	else
+	{
+		firstDisplayBatch = currentBatchIndex - 4;
+		lastDisplayBatch = firstDisplayBatch + NUM_BATCHES_TO_DISPLAY;
+
+		if(firstDisplayBatch < 1)
+		{
+			// hit lower limit - start with first batch
+			firstDisplayBatch = 1;
+			lastDisplayBatch = NUM_BATCHES_TO_DISPLAY;
+		}
+		if(lastDisplayBatch*batchSize > totalHitCnt)
+		{
+			// hit upper limit - move batch range down so that last displayed batch is also the last available batch
+			lastDisplayBatch = totalHitCnt/batchSize + 2;
+			firstDisplayBatch = lastDisplayBatch - NUM_BATCHES_TO_DISPLAY;
+		}
+	}
+
+	// populate the batches
+	for(int batchIdx = firstDisplayBatch; batchIdx < lastDisplayBatch; batchIdx++)
+	{
+		Batch batch = new Batch();
+		batch.index = batchIdx;
+		if(batch.index == currentBatchIndex)
+		{
+			batch.isCurrent = true;
+		}
+
+		batches.add(batch);
+	}
+
+	return batches;
+}
+
+class Batch
+{
+	public int index;
+	public boolean isCurrent;
+
+	{
+		index = 1;
+		isCurrent = false;
+	}
+}
+
+%>

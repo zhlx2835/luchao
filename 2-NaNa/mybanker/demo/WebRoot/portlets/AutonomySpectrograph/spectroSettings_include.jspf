@@ -1,0 +1,81 @@
+<%
+	/*********** SETTINGS for *************/
+
+	boolean bUseExactClusterWidths = false;
+
+	// time details (days)
+	int nMaxOffset 				= 14;	
+	int nMinOffset				= 0;
+
+	// tooltip
+	int	nToolTipBorderWidth		= 1;
+	int nSGToolTipMouseXOffset	= -20;
+	int nSGToolTipMouseYOffset	= 15;
+
+	// cluster highlight
+	int	nHighlightThickness		= 2;
+	int nHighlightHeight		= 10;
+
+	// colours
+        String sToolTipBGColor                  = "#FFFF00";
+        String sToolTipTextColor                = "#000000";
+        String sToolTipBorderColor              = "#000000";
+        String sHighlightColor                  = "#DDDDDD";
+        String sSelectedHighlightColor          = "#FFFFFF";
+	
+	// default pic size returned from server is 512
+	int nDefaultPicSize			= 512;
+
+	String sTitleStyle 			= "position:absolute;z-Index:4;visibility:hidden";
+	
+	String sTitleTableStyle 	= new StringBuffer()
+										.append( "background-color:" )	.append( sToolTipBGColor )
+										.append( ";color:" ) 			.append( sToolTipTextColor )
+										.append( ";border:solid " ) 	.append( sToolTipBorderColor )
+										.append( " " )					.append( nToolTipBorderWidth )
+										.append( "px;font-size:9pt;font-family:sans-serif" )
+								  .toString();
+
+	String sHighlightStyle		= new StringBuffer( "position:absolute;z-Index:2;visibility:hidden" )
+										.append( ";border-left:solid " )	.append( sHighlightColor )
+										.append( " " )						.append( nHighlightThickness )
+										.append( "px;border-right:solid " )	.append( sHighlightColor )
+										.append( " " )						.append( nHighlightThickness )
+										.append( "px;height:" )				.append( nHighlightHeight )
+										.append( ";font-size:1px" ) 		// otherwise the min height of the div is one char high, whatever that size is
+								  .toString();
+
+	String sSelectedHighlightStyle	= new StringBuffer( "position:absolute;z-Index:3;visibility:hidden" )
+										.append( ";border-left:solid " ) 	.append( sSelectedHighlightColor )
+										.append( " " )						.append( nHighlightThickness )
+										.append( "px;border-right:solid " )	.append( sSelectedHighlightColor )
+										.append( " " )						.append( nHighlightThickness )
+										.append( "px;height:" )				.append( nHighlightHeight )
+										.append( ";font-size:1px" )		// otherwise the min height of the div is one char high, whatever that size is
+									  .toString();
+
+	String sImageStyle			= "position:relative;z-Index:1";
+
+	int nTimeNow = (int)(new Date().getTime() / 1000);
+
+	int nStart 		= nTimeNow - (nOffset * 86400 + nSGInterval * 86400);
+	int nEnd 		= nTimeNow - (nOffset * 86400);
+	String sStart 	= PortletUtils.stringDayFromLongSeconds((long)(nStart+86400));
+	String sEnd 	= PortletUtils.stringDayFromLongSeconds((long)nEnd);
+	
+	boolean bAtMaxOffset = false;
+	boolean bAtMinOffset = false;
+	if (nOffset >= nMaxOffset)
+	{
+		nOffset = nMaxOffset;
+		bAtMaxOffset = true;
+	}
+	
+	if (nOffset <= nMinOffset)
+	{
+		nOffset = nMinOffset;
+		bAtMinOffset = true;
+	}
+	
+	String sImageURL = service.makeLink("AutonomyImages");
+%>

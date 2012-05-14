@@ -1,0 +1,117 @@
+<%@ page import="com.autonomy.aci.exceptions.AciException" %>
+
+<%
+sc( request );
+%>
+<%!
+static boolean m_bDark = false;
+static String BODY_BGCOLOR = "#f3f3fd";
+static String DARK_BGCOLOR = "#ededf0";//HTMLUtils.colorDarkener( BODY_BGCOLOR, 0.95 );
+final static String ADMIN_BUTTON = "blue_slant";
+
+private static String gc()
+{
+	m_bDark = !m_bDark;
+
+	if( m_bDark )
+		return DARK_BGCOLOR;
+	else
+		return BODY_BGCOLOR;
+}
+
+private static void sc( HttpServletRequest request )
+{
+	String c = (String) request.getSession().getAttribute("xcol");
+	if( c != null )
+	{
+		BODY_BGCOLOR= "#" + c;
+		String c2 = (String) request.getSession().getAttribute("xdcol");
+		if( c2 == null )
+		{
+			DARK_BGCOLOR = HTMLUtils.colorDarkener( BODY_BGCOLOR, 0.95 );
+		}
+		else
+		{
+			DARK_BGCOLOR= "#" + c2;
+		}
+	}
+}
+
+/**
+*Outputs some html to display a centered bold message, ideal for errors
+*@param UserPageInfo object to determine which button directory to use
+*/
+
+protected static String f_adminDisplayError(String sError)
+{
+	String sbRet = "<table width=\"100%\" align=\"center\" cellspacing=\"0\" cellpadding=\"2\"><tr><td align=\"center\"><font class=\"adminwarning\">" + sError + "</font><br /><br /></td></tr></table>";
+	return sbRet;
+}
+/**
+*Outputs some html to display a cancel button which goes back a page when clicked
+*@param UserPageInfo object to determine which button directory to use
+*/
+protected static String f_admin_displayCancelButton()
+{
+	//Returns a string containing html cancel button which goes back a page
+	//
+	StringBuffer sbRet = new StringBuffer(1024);
+	sbRet.append("<a class=\"textButton\" title=\"Cancel\" href='javascript:history.back()' >Cancel</a>");
+	return sbRet.toString();
+
+}
+
+/**
+*Outputs some html to display a cancel button which goes back a page when clicked
+*@param UserPageInfo object to determine which button directory to use
+*/
+protected static String f_admin_displayBackButton()
+{
+	//Returns a string containing html back button which goes back a page
+	//
+	StringBuffer sbRet = new StringBuffer(1024);
+	sbRet.append("<a class=\"textButton\" title=\"Back\" href='javascript:history.back()' >Back</a>");
+	return sbRet.toString();
+
+}
+
+/**
+* Applies rules to get the start role name to draw the role tree from
+*/
+protected static String f_getStartRoleName( PortalInfo CurrentPortal, HttpServletRequest request )
+{
+	String sRet = request.getParameter("startRoleName");
+
+	if( sRet == null )
+	{
+		sRet = CurrentPortal.getSecurityObject().getKeyByName("BaseRole", "everyone");
+	}
+
+	return sRet;
+}
+
+protected String[] f_getUserListFromRequest( PortalInfo CurrentPortal, HttpServletRequest request, String sRoleName ) throws AciException
+{
+	int nStart = StringUtils.atoi( Functions.safeRequestGet( request, "startNo", "0"), 0 );
+	String sStartLetter = Functions.safeRequestGet( request, "startLetter", "");
+	int nMaxUsers = CurrentPortal.readInt( CurrentPortal.ADMIN_SECTION, "UsersToDisplay", 50);
+
+	// get users whose names begin with sStartLetter
+	return CurrentPortal.getRolesObject().getUserListWithRole( sRoleName, nStart, nMaxUsers+1, sStartLetter + "*", true );
+}
+
+protected String f_adminDisplaySmallIcon( String sURL )
+{
+	return "<img border=\"0\" width=\"24\" height=\"24\" src=\"" + StringUtils.stringReplace(sURL, ".gif", "24.gif") + "\" vspace=\"4\" hspace=\"0\" style=\"vertical-align:middle;\" alt=\"\">";
+}
+
+protected String f_adminDisplayIcon( String sURL )
+{
+	return "<img border=\"0\" width=\"32\" height=\"32\" src=\"" + StringUtils.stringReplace(sURL, ".gif", "32.gif") + "\" vspace=\"4\" hspace=\"4\" style=\"vertical-align:middle;\" alt=\"\">";
+}
+
+protected String f_adminDisplayBigIcon( String sURL )
+{
+	return "<img border=\"0\" width=\"96\" height=\"96\" src=\"" + StringUtils.stringReplace(sURL, ".gif", "64.gif") + "\" vspace=\"4\" hspace=\"4\" style=\"vertical-align:middle;\" alt=\"\">";
+}
+%>

@@ -1,0 +1,154 @@
+<%
+request.setCharacterEncoding("utf-8");
+response.setContentType("text/html; charset=utf-8");
+%>
+
+<%
+String linkStyleClass = "textButton";
+if(CurrentPortal.readString(CurrentPortal.DEFAULTSTYLE_SECTION , "BannerType", "button").equals("text"))
+{
+	linkStyleClass = "head";
+}
+%>
+
+<tr>
+	<td
+			class="header_image"
+			colspan="2"
+			width="100%"
+			nowrap="nowrap"
+			align="right"
+			style="background-color:#E8F5FF;background-image:url(<%= CONTEXTPATH %>/images/headers/autnstd/header.jpg);background-repeat:no-repeat;background-position:left;border-bottom-width:1px;border-bottom-style:solid;border-bottom-color:#7C9CCB;"
+	>
+        <a href="<%= CONTEXTPATH %>/user/home/home.jsp?languageCode=en" title="English"><img src="<%= CONTEXTPATH %>/images/headers/lang/en.png" alt="English" border=0 height="20" width="14">
+        </a>
+        &nbsp;
+        <a href="<%= CONTEXTPATH %>/user/home/home.jsp?languageCode=de" title="Deutsch"><img src="<%= CONTEXTPATH %>/images/headers/lang/de.png" alt="Deutsch" border=0 height="20" width="14">
+        </a>
+        &nbsp;
+        <a href="<%= CONTEXTPATH %>/user/home/home.jsp?languageCode=zh" title="Chinese"><img src="<%= CONTEXTPATH %>/images/headers/lang/zh.png" alt="Chinese" border=0 height="20" width="14">
+        </a>
+        &nbsp;
+        <a href="<%= CONTEXTPATH %>/user/home/home.jsp?languageCode=ja" title="Japanese"><img src="<%= CONTEXTPATH %>/images/headers/lang/ja.png" alt="Japanese" border=0 height="20" width="14">
+        </a>
+		&nbsp;
+        <a href="<%= CONTEXTPATH %>/user/home/home.jsp?languageCode=fr" title="Français"><img src="<%= CONTEXTPATH %>/images/headers/lang/fr.png" alt="Français" border=0 height="20" width="14">
+        </a>
+        &nbsp;
+        <a href="<%= CONTEXTPATH %>/user/home/home.jsp?languageCode=es" title="Español"><img src="<%= CONTEXTPATH %>/images/headers/lang/es.png" alt="Español" border=0 height="20" width="14">
+        </a>
+        &nbsp;
+        <a href="<%= CONTEXTPATH %>/user/home/home.jsp?languageCode=it" title="Italiano"><img src="<%= CONTEXTPATH %>/images/headers/lang/it.png" alt="Italiano" border=0 height="20" width="14">
+        </a>
+        &nbsp;&nbsp;
+        <br/>
+<%
+		// admin menu
+		if(isAdmin(CurrentPortal, CurrentRoles, CurrentUser))
+		{
+%>
+			<a class="<%= linkStyleClass %>" title="Admin" href="<%= CONTEXTPATH %>/admin/home/menuFrameset.jsp">
+				<%=rb.getString("banner.admin")%>
+			</a>&nbsp;
+<%
+		}
+
+		if(isDefaultUser(CurrentUser))
+		{
+%>
+			<a class="<%= linkStyleClass %>" title="Login" href="<%= CONTEXTPATH %>/user/home/login.jsp">
+				<%=rb.getString("banner.login")%>
+			</a>&nbsp;
+<%
+			if(isUserRegAllowed(CurrentPortal))
+			{
+%>
+				<a class="<%= linkStyleClass %>" title="Sign up" href="<%= CONTEXTPATH %>/user/home/New_User.jsp">
+					<%=rb.getString("banner.signup")%>
+				</a>&nbsp;
+<%
+			}
+		}
+		else
+		{
+			String sOnLogout = "";
+			if(isDefaultSetup(CurrentUser))
+			{
+				//Edit the default user - display a save key so that changes here will affect the default user
+				//
+				sOnLogout = "onClick=\"return confirm('If you have not pressed the Save button, your changes will be lost if you log out.  Are you sure you wish to log out?')\" ";
+%>
+				<a class="<%= linkStyleClass %>" title="Save" href="<%= CONTEXTPATH %>/user/home/update_defaultUser.jsp">
+					<%=rb.getString("banner.save")%>
+				</a>&nbsp;
+<%
+			}
+			else if (isTemplateUser(CurrentUser))
+			{
+				//Display template user save button
+				sOnLogout = "onClick=\"return confirm('If you have not pressed the Save button, your changes will be lost if you log out.  Are you sure you wish to log out?')\" ";
+%>
+				<a class="<%= linkStyleClass %>" title="Save" href="<%= CONTEXTPATH %>/user/home/update_templateUser.jsp">
+					<%=rb.getString("banner.save")%>
+				</a>&nbsp;
+<%
+			}
+			if(!isNTMLAuthentication(CurrentPortal))
+			{
+%>
+			<a <%=sOnLogout%> class="<%= linkStyleClass %>" title="Logout" href="<%= CONTEXTPATH %>/user/home/logout.jsp">
+				<%=rb.getString("banner.logout")%>
+			</a>&nbsp;
+<%
+			}
+%>
+			<a class="<%= linkStyleClass %>" title="Account" href="<%= CONTEXTPATH %>/user/home/editDetails.jsp">
+				<%=rb.getString("banner.account")%>
+			</a>&nbsp;
+			<a class="<%= linkStyleClass %>" title="Page layout" href="<%= CONTEXTPATH %>/user/home/open_page_layout.jsp">
+				<%=rb.getString("banner.pageLayout")%>
+			</a>&nbsp;
+			<a class="<%= linkStyleClass %>" title="Portlet layout" href="<%= CONTEXTPATH %>/user/home/open_pane_layout.jsp">
+				<%=rb.getString("banner.portletLayout")%>
+			</a>&nbsp;
+<%
+		}
+%>
+		<a class="<%= linkStyleClass %>" title="Home" href="<%= CONTEXTPATH %>/user/home/home.jsp?maximise=&amp;page=<%=CurrentPage.PAGE_NUMBER%>">
+			<%=rb.getString("banner.home")%>
+		</a>&nbsp;&nbsp;
+	</td>
+</tr>
+
+<%!
+private boolean isAdmin(PortalInfo CurrentPortal, RolesInfo CurrentRoles, UserInfo CurrentUser)
+{
+	try {
+            String sAdminRoleName = CurrentPortal.getSecurityObject().readString("Default", "AdminRole", "portaladmin");
+            return CurrentRoles.doesUserHaveRole(CurrentUser.getUserName(), sAdminRoleName, true);
+        }
+        catch (AciException ae) {
+            return false;
+        }
+}
+private boolean isDefaultUser(UserInfo CurrentUser)
+{
+	return CurrentUser.isDefaultUser();
+}
+private boolean isUserRegAllowed(PortalInfo CurrentPortal)
+{
+	return StringUtils.isTrue(CurrentPortal.readString(CurrentPortal.ADMIN_SECTION, "AllowUserRegistration", "no"));
+}
+private boolean isDefaultSetup(UserInfo CurrentUser)
+{
+	return CurrentUser.isDefaultSetup();
+}
+private boolean isTemplateUser(UserInfo CurrentUser)
+{
+	return  StringUtils.strValid( CurrentUser.getExtendedField( CurrentUser.getUserName() + "TEMPLATEUSERREV" ));
+}
+private boolean isNTMLAuthentication(PortalInfo CurrentPortal)
+{
+	return CurrentPortal.getSecurityObject().getKeyByName("LoginMethod", "autonomy").equalsIgnoreCase("ntlm");
+}
+%>

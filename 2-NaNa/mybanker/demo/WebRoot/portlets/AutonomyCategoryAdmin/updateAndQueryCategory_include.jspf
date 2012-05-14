@@ -1,0 +1,15 @@
+<%@ page import="com.autonomy.aci.businessobjects.ResultList"%>
+
+<%@ include file="updateCategory_include.jspf" %>
+<%
+// retrieve category results
+	ResultList resultList = null;
+%>
+	<%@ include file="queryCategory_include.jspf" %>
+<%
+if(resultList != null)
+{
+	// set on session for use in categoryEdit4.jsp
+	session.setAttribute(CATConstants.SESSION_ATTRIB_SAMPLE_RESULTS, resultList);
+}
+%>

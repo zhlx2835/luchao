@@ -1,0 +1,84 @@
+<%@ page import="com.autonomy.portlet.constants.CATConstants"%>
+<%@ page import="com.autonomy.portlet.constants.ChannelsConstants"%>
+<%@ page import="com.autonomy.aci.businessobjects.Category"%>
+
+<%
+// this page creates a new category with the given name on Laune and sets it on the session
+
+// put everything in this page in its own scope so as not to interfere with other included pages
+{
+	// get parent category from session
+	Category parentCategory = (Category)session.getAttribute(CATConstants.SESSION_ATTRIB_SELECTED_CAT);
+	if(parentCategory == null)
+	{
+		setError(session, rb.getString("categoryView.error.noCatSelected"));
+		sMainPage = CATConstants.JSP_PAGE_MAIN;
+	}
+
+	IDOLService idol = (IDOLService)session.getAttribute(CATConstants.SESSION_ATTRIB_IDOL);
+	if(idol == null)
+	{
+		setError(session, rb.getString("categoryView.error.noChFuncAvailable"));
+		sMainPage = CATConstants.JSP_PAGE_MAIN;
+	}
+%>
+
+<%@ include file="showError_include.jspf" %>
+
+<%
+	if(parentCategory != null && idol != null)
+	{
+		// read name of new sub-parentCategory from request
+		String sNewSubCatName = request.getParameter(service.makeParameterName(CATConstants.REQUEST_PARAM_SUB_CAT_NAME));
+
+		if(StringUtils.strValid(sNewSubCatName))
+		{
+			try
+			{
+				Category subCategory = new Category();
+				subCategory.setName(sNewSubCatName);
+
+                // Get user details
+                String sUsername = (service.getUser()).getName();
+
+				// create sub-category
+				subCategory = idol.useChannelsFunctionality().createCategory(subCategory, parentCategory, sUsername);
+
+				// invalidate category hierarchyies in session as this needs to be re-read from Laune
+				session.removeAttribute(CATConstants.SESSION_ATTRIB_CAT_HIERARCHY);
+				session.removeAttribute(ChannelsConstants.SESSION_ATTRIB_CAT_HIERARCHY);
+				// set new category on session as it is the one we're now interested in
+				session.setAttribute(CATConstants.SESSION_ATTRIB_SELECTED_CAT, subCategory);
+
+				// add the parent category to the expanded category list so the new subcategory will be visible
+				addCategoryToExpandedList(session, parentCategory.getUID());
+
+				// move on to first page of Category Editing Workflow
+				sMainPage = CATConstants.JSP_PAGE_CAT_EDIT_1;
+
+			}
+			catch(InvalidCategoryException ice)
+			{
+				setError(session, (rb.getString("categoryCreateSubCat2_include.errorCreating")) + parentCategory.getName() + (rb.getString("categoryCreateSubCat2_include.catInvalid")));
+				// invalide the selected parentCategory session attributes as either it no longer exists or
+				// we want user to start selecting a new parentCategory
+				session.removeAttribute(CATConstants.SESSION_ATTRIB_SELECTED_CAT);
+				// try to select the desired category again
+				sMainPage = CATConstants.JSP_PAGE_MAIN;
+			}
+			catch(AciException acie)
+			{
+				setError(session, (rb.getString("categoryCreateSubCat2_include.errorCreating")) + parentCategory.getName() + (rb.getString("categoryCreateSubCat2_include.errorIs")) + acie.getMessage());
+				// try again
+				sMainPage = CATConstants.JSP_PAGE_CAT_CREATE_SUB_1;
+			}
+		}	// if(StringUtils.strValid(sNewSubCatName))
+		else
+		{
+			setError(session, rb.getString("categoryCreateSubCat2_include.noNameGiven"));
+			// try to get category name again
+			sMainPage = CATConstants.JSP_PAGE_CAT_CREATE_SUB_1;
+		}
+	}
+}
+%>

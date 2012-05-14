@@ -1,0 +1,18 @@
+<%@ page import="com.autonomy.utilities.StringUtils"%>
+
+<%
+	// look for error message in session, display if one exists
+	String sMessage = (String)session.getAttribute(ChannelsConstants.SESSION_ATTRIB_MESSAGE);
+	
+	if(StringUtils.strValid(sMessage))
+	{
+		session.removeAttribute(ChannelsConstants.SESSION_ATTRIB_MESSAGE);
+%>
+		<table>
+			<tr><td>
+				<font color="green"><em><%= sMessage %></em></font>
+			</td></tr>
+		</table>
+<%
+	}
+%>

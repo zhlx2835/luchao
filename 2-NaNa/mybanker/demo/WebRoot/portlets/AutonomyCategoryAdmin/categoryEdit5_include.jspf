@@ -1,0 +1,93 @@
+<%@ page import="com.autonomy.portlet.constants.CATConstants"%>
+<%@ page import="com.autonomy.aci.businessobjects.Category"%>
+<%@ page import="com.autonomy.aci.businessobjects.CategoryTrainingDocument"%>
+<%@ page import="com.autonomy.aci.businessobjects.TermsNWeights"%>
+<%@ page import="com.autonomy.aci.constants.IDOLConstants"%>
+
+<%
+// this page updates the category's details and training on Laune, builds the category and retrieves
+// its results before setting the updated category and results on the session
+
+// put everything in this page in its own scope so as not to interfere with other included pages
+{
+	// get category from session
+	Category category = (Category)session.getAttribute(CATConstants.SESSION_ATTRIB_SELECTED_CAT);
+
+	if(category == null)
+	{
+		setError(session, rb.getString("categoryView.error.noCatSelected"));
+		sMainPage = CATConstants.JSP_PAGE_MAIN;
+	}
+
+	// get IDOL Service from session
+	IDOLService idol = (IDOLService)session.getAttribute(CATConstants.SESSION_ATTRIB_IDOL);
+	if(idol == null)
+	{
+		setError(session, rb.getString("categoryView.error.noChFuncAvailable"));
+		sMainPage = CATConstants.JSP_PAGE_MAIN;
+	}
+%>
+
+<%@ include file="showError_include.jspf" %>
+
+<%
+	if(category != null && idol != null)
+	{
+		// read additional training files and terms and weights from request and set on category
+		// files
+		String[] asTrainingFiles	= request.getParameterValues(service.makeParameterName(CommonConstants.REQUEST_PARAM_SUGGEST_DOCS));
+		if(asTrainingFiles != null)
+		{
+			String docReference;
+			int documentPos;
+			ResultList resultList     = (ResultList)session.getAttribute(CATConstants.SESSION_ATTRIB_SAMPLE_RESULTS);
+			ArrayList resultDocuments = resultList.getDocuments();
+
+                        category.clearTrainingDocs();
+			for(int nFileIdx = 0; nFileIdx < asTrainingFiles.length; nFileIdx++)
+			{
+				documentPos = StringUtils.atoi(asTrainingFiles[nFileIdx],-1);
+				if (documentPos >= 0)
+				{
+					docReference = ((ResultDocument)resultDocuments.get(documentPos)).getDocReference();
+					CategoryTrainingDocument trainingDoc = new CategoryTrainingDocument();
+					trainingDoc.setDocReference(docReference);
+					// all documents coming from the retrain form are indexed into Suir
+					trainingDoc.setType(CategoryTrainingDocument.TRAINING_TYPE_IDOL);
+					category.addTrainingDoc(trainingDoc);
+				}
+			}
+		}
+
+		// terms and weights
+		String sTermsCSV 	 = request.getParameter(service.makeParameterName(CATConstants.REQUEST_PARAM_TERMS));
+		String sWeightsCSV = request.getParameter(service.makeParameterName(CATConstants.REQUEST_PARAM_WEIGHTS));
+		if(StringUtils.strValid(sTermsCSV) && StringUtils.strValid(sWeightsCSV))
+		{
+			StringTokenizer stTerms = new StringTokenizer(sTermsCSV, IDOLConstants.LIST_SEPARATOR);
+			StringTokenizer stWeights = new StringTokenizer(sWeightsCSV, IDOLConstants.LIST_SEPARATOR);
+			// are there as many terms as weights
+			if(stTerms.countTokens() == stWeights.countTokens())
+			{
+				TermsNWeights modifiedTNW = new TermsNWeights();
+				// now populated terms and weights
+				while(stTerms.hasMoreTokens())
+				{
+					modifiedTNW.setTermNWeight(stTerms.nextToken(), StringUtils.atoi(stWeights.nextToken(), 0));
+				}
+				// set tnw on category
+				category.setModifiedTermsAndWeights(modifiedTNW);
+			}
+			else
+			{
+				setError(session, (rb.getString("categoryEdit5_include.couldNotUpdate")) + " " + category.getName() + (rb.getString("categoryEdit5_include.error.termsNweights")));
+			}
+		}
+
+		// update category
+%>
+		<%@ include file="updateAndQueryCategory_include.jspf" %>
+<%
+	}
+}
+%>
