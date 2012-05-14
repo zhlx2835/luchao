@@ -1,0 +1,495 @@
+body {
+	background-color: #FFFFFF;
+}
+
+
+/* /////////////////////////////////////////////////////////////////////// */
+/* PORTLET CONTAINER GENERAL STYLES
+/* /////////////////////////////////////////////////////////////////////// */
+
+table.pContainer {
+	/*
+	The trick here is to anchor the background-image to the bottom
+	of the rectangle, so that the background-color is revealed
+	if the rectangle grows larger than the background-image
+	*/
+	background-color:    #E8F5FF; /* Colour of first pixel of background-image */
+	background-image:    url(./images/redesign/background_strip.gif); /* Left background image */
+	background-repeat:   repeat-x;
+	background-position: bottom;
+	width:               100%;
+	border-color:        #7C9CCB;
+	border-style:        solid;
+	border-width:        1px;
+	border-collapse:     collapse;
+	border-spacing:      0px; /* Disable cell spacing */
+
+}
+
+table.pContainer * {
+	font-family:         tahoma,helvetic,arial,sans-serif;
+	font-size:           10pt;
+	padding:             0px; /* Switch off all cell padding by default */
+	color:               #3C6076;
+}
+
+table.pContainer img {
+	border-width:        0px;
+}
+
+table.pContent {
+}
+
+/* This is for archive and sub menu choices */
+TABLE
+{
+    COLOR: #3F5F78;
+    FONT-FAMILY: Verdana, Arial, sans-serif;
+    FONT-SIZE: 8pt;
+    MARGIN: 0px;
+}
+TABLE.pane1
+{
+    Border-colour:	#7C9CCB;
+    border-style:	solid;
+    border-width:	1px;
+    FONT-FAMILY: Verdana, Arial, sans-serif;
+    FONT-SIZE: 8pt;
+    MARGIN: 0px;
+    TEXT-ALIGN: center;
+    font-COLOR: black
+    
+}
+/* This is for text with a portlet e.g. user login*/
+TABLE.pane2
+{
+    COLOR: #3F5F78
+    FONT-FAMILY: Verdana, Arial, sans-serif;
+    FONT-SIZE: 8pt;
+    FONT-WEIGHT: bold;
+    MARGIN: 0px;
+    TEXT-ALIGN: center
+}
+TABLE.normal
+{
+    BACKGROUND: none transparent scroll repeat 0% 0%;
+    FONT-FAMILY: Verdana, Arial, sans-serif;
+    FONT-SIZE: 8pt;
+    MARGIN: 0px;
+    font-color: black
+}
+TABLE.head1
+{
+    BACKGROUND: #a8c4d8;
+    FONT-FAMILY: Verdana, Arial, sans-serif;
+    FONT-SIZE: 10pt;
+    FONT-WEIGHT: bold;
+    MARGIN: 0px;
+    font-color: #ffffff
+}
+TABLE.head2
+{
+    BACKGROUND: #a8bac6;
+    FONT-FAMILY: Verdana, Arial, sans-serif;
+    FONT-SIZE: 8pt;
+    MARGIN: 0px;
+    font-color: #ffffff
+}
+TABLE.admin1
+{
+    BACKGROUND: #a8c4d8;
+    BORDER-BOTTOM-COLOR: #000000;
+    BORDER-LEFT-COLOR: #000000;
+    BORDER-RIGHT-COLOR: #000000;
+    BORDER-TOP-COLOR: #000000;
+    COLOR: black;
+    FONT-FAMILY: Verdana, Arial, sans-serif;
+    FONT-SIZE: 8pt;
+    FONT-WEIGHT: bold;
+    border-spacing: 1pt
+}
+TABLE.admin2
+{
+    BACKGROUND: none transparent scroll repeat 0% 0%;
+    BORDER-BOTTOM-COLOR: #000000;
+    BORDER-LEFT-COLOR: #000000;
+    BORDER-RIGHT-COLOR: #000000;
+    BORDER-TOP-COLOR: #000000;
+    COLOR: black;
+    FONT-FAMILY: Verdana, Arial, sans-serif;
+    FONT-SIZE: 8pt;
+    border-spacing: 1pt
+}
+
+/* /////////////////////////////////////////////////////////////////////// */
+/* TITLEBAR STYLES
+/* /////////////////////////////////////////////////////////////////////// */
+
+td.header_image {
+	background-color:	#E8F5FF;	/* This is for the main header at the top of the page */
+	background-image:	url(./images/headers/autnstd/header.jpg);
+	background-repeat:	no-repeat;
+	background-position:	left;
+	border-bottom-width:	1px;
+	border-bottom-style:	solid;
+	border-bottom-color:	#7C9CCB;
+
+}
+
+table.seperator {
+	border-bottom-width:	1px;	/* This is for the one pixel seperator */
+	border-bottom-style:	solid;
+	border-bottom-color:	#3C626F;
+}
+
+table.strip {
+	border-top-width:	1px;	/* This is for the one pixel strip below the welcome message */
+	border-top-style:	solid;
+	border-top-color:	#7C9CCB;	
+}
+
+table.pTitlebar {
+	background-image:    url(./images/redesign/top_strip.gif); /* Repeating background image */
+	width:               100%;
+	height:              18px;
+	border-collapse:     collapse;
+	border-spacing:      0px; /* Disable cell spacing */
+	margin:              0px;
+}
+
+
+
+
+td.pTitle {
+	background-image:    url(./images/redesign/top_left.gif); /* Left background image */
+	background-repeat:   no-repeat;
+	background-position: left;
+	min-width:           149px;
+	font-weight:         bold;
+}
+
+td.pTitle span {
+	padding-left:        24px; /* Use span to prevent td.pTitle expansion */
+}
+
+td.pTitleRight {
+	background-image:    url(./images/redesign/top_right.gif); /* Right background image */
+	text-align:          right;
+	background-repeat:   no-repeat;
+	background-position: right;
+	min-width:           149px;
+}
+
+td.pTitleCtrl {
+	width:               16px;
+	height:              13px;
+	padding:             0px;
+}
+
+/* /////////////////////////////////////////////////////////////////////// */
+/* STANDARD ANCHOR TAG
+/* /////////////////////////////////////////////////////////////////////// */
+
+a
+{
+    COLOR: #4e6790;
+    FONT-FAMILY: Arial, sans-serif;
+    FONT-SIZE: 8pt;
+    FONT-WEIGHT: normal;
+    TEXT-DECORATION: none
+}
+
+/* /////////////////////////////////////////////////////////////////////// */
+/* TITLEBAR CONTROL STYLES
+/* /////////////////////////////////////////////////////////////////////// */
+
+a.pCtrlEdit {
+	background-image:    url(./images/redesign/edit.gif);
+	background-repeat:   no-repeat;
+	width:               13px;
+	height:              13px;
+	font-size:           0px;
+	text-decoration:     none;
+}
+
+a.pCtrlEdit:hover {
+	background-image:    url(./images/redesign/edit_h.gif);
+}
+
+a.pCtrlMinimise {
+	background-image:    url(./images/redesign/minimise.gif);
+	background-repeat:   no-repeat;
+	width:               13px;
+	height:              13px;
+	font-size:           0px;
+	text-decoration:     none;
+}
+
+a.pCtrlMinimise:hover {
+	background-image:    url(./images/redesign/minimise_h.gif);
+}
+
+a.pCtrlMaximise {
+	background-image:    url(./images/redesign/maximise.gif);
+	background-repeat:   no-repeat;
+	width:               13px;
+	height:              13px;
+	font-size:           0px;
+	text-decoration:     none;
+}
+
+a.pCtrlMaximise:hover {
+	background-image:    url(./images/redesign/maximise_h.gif);
+}
+
+a.pCtrlRestore {
+	background-image:    url(./images/redesign/restore.gif);
+	background-repeat:   no-repeat;
+	width:               13px;
+	height:              13px;
+	font-size:           0px;
+	text-decoration:     none;
+}
+
+a.pCtrlRestore:hover {
+	background-image:    url(./images/redesign/restore_h.gif);
+}
+
+a.pCtrlClose {
+	background-image:    url(./images/redesign/close.gif);
+	background-repeat:   no-repeat;
+	width:               13px;
+	height:              13px;
+	font-size:           0px;
+	text-decoration:     none;
+}
+
+a.pCtrlClose:hover {
+	background-image:    url(./images/redesign/close_h.gif);
+}
+
+/* /////////////////////////////////////////////////////////////////////// */
+/* BUTTON STYLES
+/* /////////////////////////////////////////////////////////////////////// */
+
+a.textButton
+{
+    COLOR: #3F5F78;
+    FONT-FAMILY: Verdana, Arial, sans-serif;    
+    FONT-SIZE: 8pt;
+    FONT-WEIGHT: bold;
+    TEXT-DECORATION: none;
+    BACKGROUND-IMAGE:    url(./images/buttons/blue_slant/b_blank.gif);
+    BACKGROUND-REPEAT:    repeat-x;
+    BACKGROUND-POSITION:    top;    
+    PADDING-LEFT:      15px;
+    PADDING-RIGHT:      10px;
+}
+a.textButton:hover
+{
+    COLOR: #E52121;
+    FONT-SIZE: 8pt;
+    TEXT-DECORATION: underline;
+}
+
+
+/* /////////////////////////////////////////////////////////////////////// */
+/* FOOTER BAR STYLES
+/* /////////////////////////////////////////////////////////////////////// */
+
+table.pFooter {
+	background-image:    url(./images/redesign/bottom_strip.gif); /* Repeating background image */
+	width:               100%;
+	height:              18px;
+	border-collapse:     collapse;
+	border-spacing:      0px; /* Disable cell spacing */
+	margin:              0px;
+}
+
+td.pFooterLeft {
+	background-image:    url(./images/redesign/bottom_left.gif); /* Left background image */
+	background-repeat:   no-repeat;
+	background-position: left;
+	width:               149px;
+}
+
+td.pFooterRight {
+	background-image:    url(./images/redesign/bottom_right.gif); /* Right background image */
+	background-repeat:   no-repeat;
+	background-position: right;
+	width:               149px;
+}
+
+
+/* /////////////////////////////////////////////////////////////////////// */
+/* MISC TEXT STYLES
+/* /////////////////////////////////////////////////////////////////////// */
+
+.pTitle, .pLabel, .pItem {
+	color:               #0000FF;
+	margin-top:          4px;
+	margin-bottom:       4px;
+}
+
+.pLabel {
+	font-weight:         bold;
+}
+
+
+/* /////////////////////////////////////////////////////////////////////// */
+/* RESULT LIST STYLES
+/* /////////////////////////////////////////////////////////////////////// */
+
+table.pResultList {
+	background-color:    #F2F8FE;
+	background-image:    url(./images/redesign/content_background_strip.gif);
+	background-repeat:   repeat-x;
+	background-position: bottom;
+	border-color:        #7C9CCB;
+	border-style:        solid;
+	border-width:        1px;
+	margin-left:         10px;
+	margin-right:        10px;
+	margin-top:          5px;
+	margin-bottom:       10px;
+}
+
+.pResultTitle, .pResultSummary {
+	font-size:           10pt;
+	line-height:         12pt;
+	margin-left:         10px;
+	margin-right:        10px;
+}
+
+.pResultTitle {
+	font-weight:         bold;
+	text-decoration:     underline;
+	color:               #000000;
+	margin-top:          4px;
+	margin-bottom:       2px;
+}
+
+.pResultSummary {
+	margin-top:          2px;
+	margin-bottom:       12px;
+}
+
+/* /////////////////////////////////////////////////////////////////////// */
+/* FONT STYLES
+/* /////////////////////////////////////////////////////////////////////// */
+FONT
+{
+    FONT-FAMILY: Verdana, Arial, sans-serif;
+    FONT-SIZE: 8pt;
+    FONT-WEIGHT: normal;
+    TEXT-DECORATION: none
+}
+/* This is for the text within the portlet */
+FONT.normal
+{
+    COLOR: #3F5F78;
+    FONT-FAMILY: Verdana, Arial, sans-serif;
+    FONT-SIZE: 8pt
+}
+FONT.generic
+{
+    COLOR: white;
+    FONT-FAMILY: Verdana, Arial, sans-serif;
+    FONT-SIZE: 8pt
+}
+/* This is for the copyright message*/
+FONT.genericbold
+{
+    COLOR: #3F5F78;
+    FONT-FAMILY: Verdana, Arial, sans-serif;
+    FONT-SIZE: 8pt;
+    FONT-WEIGHT: bold
+}
+/* This is for the welcome message */
+FONT.normalbold
+{
+    COLOR: #3F5F78;
+    FONT-FAMILY: Verdana, Arial, sans-serif;
+    FONT-SIZE: 8pt;
+    FONT-WEIGHT: bold
+}
+/* This is for the portlet header text */
+FONT.head
+{
+    COLOR: #3F5F78; 
+    FONT-FAMILY: Verdana, Arial, sans-serif;
+    FONT-SIZE: 10pt;
+    FONT-WEIGHT: bold
+}
+FONT.summary
+{
+    COLOR: #808080;
+    FONT-FAMILY: Verdana, Arial, sans-serif;
+    FONT-SIZE: 8pt;
+    FONT-STYLE: italic
+}
+FONT.note
+{
+    COLOR: black;
+    FONT-FAMILY: Verdana, Arial, sans-serif;
+    FONT-SIZE: 8pt;
+    FONT-STYLE: italic
+}
+FONT.tab
+{
+    COLOR: black;
+    FONT-FAMILY: Verdana, Arial, sans-serif;
+    FONT-SIZE: 8pt
+}
+FONT.warning
+{
+    COLOR: #c00000;
+    FONT-FAMILY: Verdana, Arial, sans-serif;
+    FONT-SIZE: 8pt;
+    FONT-WEIGHT: bold
+}
+FONT.adminwarning
+{
+    COLOR: #b62828;
+    FONT-FAMILY: Verdana, Arial, sans-serif;
+    FONT-SIZE: 8pt;
+    FONT-WEIGHT: bold
+}
+FONT.message
+{
+    FONT-FAMILY: Verdana, Arial, sans-serif;
+    FONT-SIZE: 8pt;
+    font-color: #808080
+}
+
+/* /////////////////////////////////////////////////////////////////////// */
+/* SELECT BOX STYLES
+/* /////////////////////////////////////////////////////////////////////// */
+/* This is for the text in the drop down boxes */
+SELECT
+{
+    FONT-FAMILY: Verdana, Arial, sans-serif;
+    FONT-SIZE: 11px
+}
+
+/* /////////////////////////////////////////////////////////////////////// */
+/* TEXT AREA STYLES
+/* /////////////////////////////////////////////////////////////////////// */
+/* This is for the area used to enter query text */
+TEXTAREA
+{
+    COLOR: #000000;
+    FONT-FAMILY: Verdana, Arial, sans-serif;
+    FONT-SIZE: 8pt;
+    FONT-WEIGHT: normal
+}
+
+/* /////////////////////////////////////////////////////////////////////// */
+/* MISC. STYLES
+/* /////////////////////////////////////////////////////////////////////// */
+UNKNOWN
+{
+    COLOR: #000000;
+    FONT-FAMILY: Verdana, Arial, sans-serif;
+    FONT-SIZE: 8pt
+}

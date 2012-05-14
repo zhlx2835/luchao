@@ -1,0 +1,50 @@
+<%@ page import="java.util.ArrayList"%>
+<%@ page import="java.util.Iterator"%>
+<%@ page import="com.autonomy.aci.businessobjects.CategoryTrainingDocument"%>
+
+<%
+ArrayList alTrainingDocs = category.getTrainingDocs();
+if(!alTrainingDocs.isEmpty())
+{
+%>
+	<table width="100%">
+<%
+		Iterator itTrainingDocs = alTrainingDocs.iterator();
+		while(itTrainingDocs.hasNext())
+		{
+			CategoryTrainingDocument trainingDoc = 	(CategoryTrainingDocument)itTrainingDocs.next();
+%>
+			<tr>
+				<td>
+					<input type="hidden"
+								 name="<%= service.makeParameterName(CATConstants.REQUEST_PARAM_TRAINING_TYPES) %>"
+								 value="<%= trainingDoc.getType() %>"
+								 />
+					<input type="checkbox"
+								 name="<%= service.makeParameterName(CATConstants.REQUEST_PARAM_TRAINING_FILES) %>"
+								 value="<%= trainingDoc.getDocReference() %>"
+								 checked="checked"
+								 />
+				</td>
+				<td>
+					<%= trainingDoc.getTitle() %>
+				</td>
+			</tr>
+<%
+		}
+%>
+	</table>
+<%
+}
+else
+{
+%>
+	<%=rb.getString("trainingDocs_include.noTrainingDoc")%>
+<%
+}
+%>
+
+
+
+
+

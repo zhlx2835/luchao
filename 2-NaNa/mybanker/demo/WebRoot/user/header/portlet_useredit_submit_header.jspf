@@ -1,0 +1,38 @@
+<%@ page import = "java.util.*" %>
+<%@ page import = "java.io.*" %>
+<%@ page import = "java.net.*" %>
+<%@ page import = "com.autonomy.portal4.*" %>
+<%@ page import = "com.autonomy.utilities.*" %>
+<%
+request.setCharacterEncoding("utf-8");
+response.setContentType("text/html; charset=utf-8");
+%>
+
+<%@ include file = "/user/home/CheckUser.jspf" %>
+<%
+PortletInfo EditPortlet = (PortletInfo) session.getAttribute("EditPortlet");
+AllPortlets allPortlets = CurrentPortal.getAllPortletsObject();
+
+String sPortletKey = request.getParameter("panekey");
+String sPortletName = request.getParameter("newPortletName");
+if(StringUtils.strValid(sPortletName))
+{
+	EditPortlet.setPortletName( sPortletName );
+}
+
+CurrentUser.batchReset();
+//
+//Colour settings
+//
+/*
+
+This bit is used to set the portlet's color - redundant in PIB redesign
+
+String sBackground = request.getParameter("bgcolor");
+String sHeader = request.getParameter("hdcolor");
+String sBorder = request.getParameter("bdcolor");
+EditPortlet.setPortletBackground("bgcolor=\"" + sBackground + "\"");
+EditPortlet.setPortletHeaderColor(sHeader);
+EditPortlet.setPortletBorderColor(sBorder);
+*/
+%>

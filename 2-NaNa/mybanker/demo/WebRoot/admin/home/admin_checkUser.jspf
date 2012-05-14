@@ -1,0 +1,51 @@
+<%
+request.setCharacterEncoding("utf-8");
+response.setContentType("text/html; charset=utf-8");
+%>
+
+<%
+//This pre-compile include gets the PortalInfo object and instantiates it if needed
+%>
+<%@ include file="/admin/home/admin_checkPortal.jspf" %>
+<%
+
+String sErrorRedirectURL = "";
+boolean bWasFatalError = false;
+//
+//Check current user data
+//
+CurrentUser = (UserInfo) session.getAttribute( CurrentPortal.PORTAL_BACKEND_LOCATION + "CurrentUser");
+
+//
+//Check user has right to be here
+//
+if(CurrentUser != null)
+{
+	CurrentPortal.LogFull("admin_checkUser: Got user info.");
+	if( !CurrentUser.doesUserHaveRole(CurrentPortal.getSecurityObject().getKeyByName( "AdminRole", "portaladmin")) )
+	{
+		//OK, its the wrong user, but could have logged in from admin
+		if( CurrentUser.getAttribute("IAmAdmin") == null )
+		{
+			CurrentPortal.Log("admin_checkUser: Attempt to access admin pages by unprivileged user " + CurrentUser.getUserName() );
+			sErrorRedirectURL = "/admin/home/login.jsp";
+			bWasFatalError = true;
+		}
+	}
+}
+else
+{
+	CurrentPortal.LogFull("admin_checkUser: No one logged in:");
+	sErrorRedirectURL = "/admin/home/login.jsp";
+	bWasFatalError = true;	
+}
+
+if(bWasFatalError)
+{
+	CurrentPortal.LogFull("admin_checkUser: About to redirect home");
+	response.sendRedirect(request.getContextPath() + sErrorRedirectURL);
+	CurrentPortal.LogFull("redirected home");
+
+	return;
+}
+%>

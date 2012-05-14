@@ -1,0 +1,56 @@
+<%
+request.setCharacterEncoding("utf-8");
+response.setContentType("text/html; charset=utf-8");
+%>
+
+<%@ page import = "com.autonomy.portal4.*" %>
+<%@ page import = "com.autonomy.utilities.*" %>
+<%@ page import = "java.util.*" %>
+<%@ page import = "java.io.*" %>
+<%@ page import = "java.net.URLEncoder" %>
+<%
+//
+//recall objects
+//
+%>
+<%@ include file = "/user/include/getBackendLocation_include.jspf" %>
+<%
+PortalInfo CurrentPortal = PortalDistributor.getInstance(BACKEND_LOCATION);
+CurrentPortal.LogFull("style_header: Entered Style header");
+
+UserInfo CurrentUser = null;
+UserPageInfo CurrentPage = null;
+if(CurrentPortal != null)
+{
+	//
+	//switch session to session object
+	//
+	try
+	{
+		CurrentUser = (UserInfo) session.getAttribute(CurrentPortal.PORTAL_BACKEND_LOCATION+ "CurrentUser");
+		CurrentPage = (UserPageInfo) CurrentUser.getAttribute("CurrentPage");
+		
+		if(CurrentPage == null)
+		{
+			CurrentPage = CurrentUser.getPageByNumber(1);
+		}
+		CurrentUser.getUserName();
+		CurrentPage.getPageName();
+	}
+	catch(NullPointerException e)
+	{
+		CurrentPortal.Log("style_header:  CurrentUser (" + CurrentUser + ") or CurrentPage (" + CurrentPage + ") was null on arrival here.  Resetting...");
+		response.sendRedirect(request.getContextPath() +"/user/home/home.jsp?error=" + Functions.f_URLEncode("User not successfully logged in"));
+		return;
+	}
+	PortletInfo CurrentPortlet;
+	String sIncludePath = request.getContextPath() + "/";
+	String sIncludeName = null;
+	//
+	//reset Portlet counter
+	//
+	CurrentPortal.LogFull("style_header: Resetting pane counter");
+	CurrentPage.PORTLET_NUMBER = 0;
+	CurrentPortal.LogFull("style_header: Reset pane counter");
+	//
+	%>

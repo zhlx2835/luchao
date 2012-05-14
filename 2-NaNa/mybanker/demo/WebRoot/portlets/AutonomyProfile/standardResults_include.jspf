@@ -1,0 +1,576 @@
+<%@ page import="java.util.Locale"%>
+<%@ page import="java.util.ResourceBundle"%>
+<%@ page import = "java.io.*" %>
+<%@ page import = "com.autonomy.utilities.*" %>
+
+<%
+/*
+* standardResults_include.jsp
+* Given an users agent, displays similar agents
+* Variables required:
+* service							-	PortalService object
+* acirResult						-	AciResponse, result of query
+* bStandardResults_sayNoResults		-	Print a small message if no results are found
+* bStandardResults_withCheckboxes	-	Display a checkbox with each result:
+*															name:  mangle(result)
+*															value: docid of result
+* bStandardResults_withWeight		-	Display percentages for each result
+* bStandardResults_withSummary		- 	Display the summary?
+* bStandardResults_withTitle 		-	Display the title?
+* bStandardResults_withDatabase 	-	Display database icon?
+* bStandardResults_withContent 		-	Add a View Content icon and link?
+* bStandardResults_withHighlights 	-	Add a Highlights icon and link?
+* bStandardResults_withConceptSummary 	-	Add a Summary icon and link?
+* bStandardResults_withAgent 		-	Add a Create Agent icon and link?
+* bStandardResults_withMail 		-	Add a Mail Document icon and link?
+* bStandardResults_withSimilar 		-	Add a link to similar documents popup?
+* sUsername							-	the name of the user whose privileges are to be used to generate suggestions
+* svThreshold						-	threshold to use for suggestions
+* svNumResults						-	number of suggestion results to display
+* mResultCheckBxs					-	qualified parameter name for checkbox input fields
+* sDefaultLogoName					-	the name of an image to use if the result entry does not specify one with a autn:image entry
+* bUsingService						-	whether the PortalService object service should be used for generating HTML class info
+*/
+
+String refCharacterEncoding = service.readConfigParameter(CommonConstants.REFERENCE_ENCODING, CommonConstants.DEFAULT_REF_ENCODING );
+String userHost = service.readConfigParameter(CommonConstants.CONFIG_NORE_HOST, "");
+String userPort = service.readConfigParameter(CommonConstants.CONFIG_NORE_PORT, "");
+
+if( !StringUtils.strValid(sDefaultLogoName) )
+{
+	sDefaultLogoName = "htm.gif";
+}
+
+// CSS class names
+String sNormalCSSClass;
+String sNormalBoldCSSClass;
+String sAutosuggestLink;
+String sStandaloneLink;
+String sCreateAgentLink;
+String sEmailResultLink;
+String sResultIconDREFieldName;
+String sTargetWindow;		// bit of a hack so that a new window is only opened for results displayed in the porlets while autosuggest recycles its window.
+if( bUsingService )
+{
+	sNormalCSSClass 	= service.getCSSClass(service.TEXT_2);
+	sAutosuggestLink 	= service.makeLink("autosuggest.jsp");
+	sStandaloneLink		= service.makeLink("standalonesuggest.jsp");
+	sCreateAgentLink 	= service.makeLink("createagent.jsp");
+	sEmailResultLink	= service.makeLink("emailresult.jsp");
+	sResultIconDREFieldName 	= (String)service.getParameter("DocImageFieldName");
+	if( !StringUtils.strValid(sResultIconDREFieldName) )
+	{
+		sResultIconDREFieldName = "FILEEXTENSION";
+	}
+	sTargetWindow 		= "result";
+}
+else
+{
+	sNormalCSSClass 	= "normal";
+	sAutosuggestLink 	= "./autosuggest.jsp";
+	sStandaloneLink		= "./standalonesuggest.jsp";
+	sCreateAgentLink 	= "./createagent.jsp";
+	sEmailResultLink	= "./emailresult.jsp";
+	sResultIconDREFieldName 	= "FILEEXTENSION";
+	sTargetWindow 		= "_parent";
+}
+
+// turn off emailing and agent creating if this is the (PiB4) default user
+if(sUsername != null && sUsername.equals("default"))
+{
+	bStandardResults_withAgent = false;
+	bStandardResults_withMail  = false;
+}
+
+// find first result entry
+AciResponse acirSingleResult = null;
+if( acirResult != null )
+{
+	acirSingleResult = acirResult.findFirstEnclosedOccurrence("autn:hit");
+}
+
+if(acirSingleResult == null)
+{
+	// got no results
+	if( bStandardResults_sayNoResults )
+	{
+%>
+		<tr>
+			<td>
+				<font class="<%= sNormalCSSClass %>">
+					<%=rb.getString("standardResult_include.noResults")%>
+				</font>
+			</td>
+		</tr>
+<%
+	}
+}
+
+else
+{
+
+	// Set up vars for results include
+	int Checkboxes 	= bStandardResults_withCheckboxes 		? 1   : 0;
+	int Weight 		= bStandardResults_withWeight 			? 2   : 0;
+	int Title 		= bStandardResults_withTitle 			? 4   : 0;
+	int Content 	= bStandardResults_withContent 			? 8   : 0;
+	int Highlights 	= bStandardResults_withHighlights 		? 16  : 0;
+	int Short_sum 	= bStandardResults_withConceptSummary	? 32  : 0;
+	int Agent 		= bStandardResults_withAgent 			? 64  : 0;
+	int Mail 		= bStandardResults_withMail 			? 128 : 0;
+	int Database 	= bStandardResults_withDatabase 		? 256 : 0;
+	int Summary 	= bStandardResults_withSummary 			? 512 : 0;
+	int nDisplayParameters 	= 	Checkboxes | Weight | Title | Content | Highlights | Short_sum | Agent | Mail | Database | Summary;
+
+
+	StringBuffer sbCommonParameters = new StringBuffer();
+	//add session variable names info
+	String usernameRequestParameter = "?username=" + StringUtils.encryptString(sUsername);
+	sbCommonParameters.append(usernameRequestParameter);
+	if(service instanceof com.autonomy.APSL.PiB4ServiceInterface)
+	{
+		sbCommonParameters.append("&pib=true");
+	}
+
+	StringBuffer sbAutoSuggestURL = new StringBuffer( sAutosuggestLink );
+	//add session variable names info
+	sbAutoSuggestURL.append(sbCommonParameters.toString());
+	sbAutoSuggestURL.append("&threshold=");
+	sbAutoSuggestURL.append(svThreshold);
+	sbAutoSuggestURL.append("&numresult=");
+	sbAutoSuggestURL.append(svNumResults);
+	sbAutoSuggestURL.append("&defaultlogo=");
+	sbAutoSuggestURL.append(sDefaultLogoName);
+	sbAutoSuggestURL.append("&display=");
+	sbAutoSuggestURL.append(nDisplayParameters);
+	sbAutoSuggestURL.append(nDisplayParameters);
+	sbAutoSuggestURL.append("&refencoding=");
+	sbAutoSuggestURL.append(refCharacterEncoding);
+
+	StringBuffer sbAutoSuggestSuggestURL = new StringBuffer(sStandaloneLink);
+	//add session variable names info
+	sbAutoSuggestSuggestURL.append(sbCommonParameters.toString());
+	sbAutoSuggestSuggestURL.append("&threshold=");
+	sbAutoSuggestSuggestURL.append(svThreshold);
+	sbAutoSuggestSuggestURL.append("&numresult=");
+	sbAutoSuggestSuggestURL.append(svNumResults);
+	sbAutoSuggestSuggestURL.append("&defaultlogo=");
+	sbAutoSuggestSuggestURL.append(sDefaultLogoName);
+	sbAutoSuggestSuggestURL.append("&display=");
+	sbAutoSuggestSuggestURL.append(nDisplayParameters);
+	sbAutoSuggestSuggestURL.append("&refencoding=");
+	sbAutoSuggestSuggestURL.append(refCharacterEncoding);
+
+
+	StringBuffer sbCreateAgentURL = new StringBuffer( sCreateAgentLink );
+	sbCreateAgentURL.append(sbCommonParameters.toString());
+	sbCreateAgentURL.append("&refencoding=");
+	sbCreateAgentURL.append(refCharacterEncoding);
+
+	StringBuffer sbEmailResultURL = new StringBuffer( sEmailResultLink );
+	sbEmailResultURL.append(sbCommonParameters.toString());
+	sbEmailResultURL.append("&refencoding=");
+	sbEmailResultURL.append(refCharacterEncoding);
+	sbEmailResultURL.append(usernameRequestParameter).append("&userhost=").append(StringUtils.encryptString(userHost)).append("&userport=").append(StringUtils.encryptString(userPort));
+
+	// loop through result entries
+	while(acirSingleResult != null)
+	{
+		// grab info from result object
+		String sRelevence 		= acirSingleResult.getTagValue("autn:weight",			"-");
+		String sLinks 			= acirSingleResult.getTagValue("autn:links",			"");
+		String sResultIconValue	= acirSingleResult.getTagValue(sResultIconDREFieldName, "");
+		String sQuickSummary	= acirSingleResult.getTagValue("SUMMARY",				"");
+		String sSummary 		= acirSingleResult.getTagValue("autn:summary",		 	"");
+		String sSource			= acirSingleResult.getTagValue("autn:database",			"Unknown");
+		String sAuthor	 		= acirSingleResult.getTagValue("AUTHOR",				"");
+		String sSize	 		= acirSingleResult.getTagValue("PAGESIZE",				"");
+  	String sURL 				= acirSingleResult.getTagValue("autn:reference",		"");
+  	if(!StringUtils.strValid(sURL))
+		{
+			sURL 			= acirSingleResult.getTagValue("autn:url", "");
+		}
+		String sTitle 			= acirSingleResult.getTagValue("autn:title");
+		if(!StringUtils.strValid(sTitle))
+		{
+			sTitle 			= acirSingleResult.getTagValue("DRETITLE");
+		}
+		// last attempt to get a title
+		if(!StringUtils.strValid(sTitle))
+		{
+			sTitle = getTitleFromSummary(sSummary);
+		}
+
+		String sEncodedURL = HTTPUtils.URLEncode(sURL, refCharacterEncoding);
+
+		String sFileImagePath = getImagePathFromIconValue(sResultIconValue, sImageURL, sDefaultLogoName, application, service);
+		StringBuffer sbDetailedInfo = buildDetailedInfo(sSource, sAuthor, StringUtils.atoi(sSize, 0) / 1024, rb);
+
+		// finish off autosuggest URI arguments
+		StringBuffer sbCommonAutoSuggestURL = new StringBuffer(sbAutoSuggestURL.toString());
+		sbCommonAutoSuggestURL.append("&url=");
+		sbCommonAutoSuggestURL.append(sEncodedURL);
+		sbCommonAutoSuggestURL.append("&links=");
+		sbCommonAutoSuggestURL.append(sLinks);
+		sbCommonAutoSuggestURL.append("&refencoding=");
+		sbCommonAutoSuggestURL.append(refCharacterEncoding);
+
+		String sGetContentsURL = sbCommonAutoSuggestURL.toString() + "&command=getcontent";
+		String sGetHighlightsURL = sbCommonAutoSuggestURL.toString() + "&command=gethighlights";
+		String sGetSummaryURL = sbCommonAutoSuggestURL.toString() + "&command=getsummary";
+		// add extra file info if this result is a DocMan server document
+		if(resultIsDocManDocument(sSource, service))
+		{
+			sbCommonAutoSuggestURL.append("&filename=");
+			sbCommonAutoSuggestURL.append(HTTPUtils.URLEncode(sTitle, refCharacterEncoding));
+			sbCommonAutoSuggestURL.append("&command=ShowDocManDoc");
+		}
+		String sTitleURL = sbCommonAutoSuggestURL.toString();
+
+		StringBuffer sbAutoSuggestSuggestActURL = new StringBuffer(sbAutoSuggestSuggestURL.toString());
+		sbAutoSuggestSuggestActURL.append("&url=");
+		sbAutoSuggestSuggestActURL.append(sEncodedURL);
+
+		// finish off create agent argument
+		StringBuffer sbCreateAgentActURL = new StringBuffer( sbCreateAgentURL.toString() );
+		sbCreateAgentActURL.append("&url=");
+		sbCreateAgentActURL.append(sEncodedURL);
+
+
+		// finish off email result argument
+		StringBuffer sbEmailResultActURL = new StringBuffer( sbEmailResultURL.toString() );
+		sbEmailResultActURL.append("&url=");
+		sbEmailResultActURL.append(sEncodedURL);
+
+		// sort out Outlook references - these have a trailing "&attach..." that must be removed
+		if(sURL.startsWith("outlook"))
+		{
+			int nAmpIdx = sURL.lastIndexOf("&attach");
+			if(nAmpIdx > -1)
+			{
+				sURL = sURL.substring(0, nAmpIdx);
+			}
+		}
+
+		// output the result row
+%>
+			<tr>
+<%
+				if(bStandardResults_withCheckboxes)
+				{
+%>
+					<td width="20" align="center">
+						<input type="checkbox" name="<%= mResultCheckBxs %>" value="<%= sURL %>">
+					</td>
+<%
+				}
+				else
+				{
+%>
+					<td></td>
+<%
+				}
+				if(bStandardResults_withWeight)
+				{
+%>
+					<td align="left" width="30">
+						<font class="<%= sNormalCSSClass %>" color="red">
+							<%=sRelevence %>%&nbsp;&nbsp;
+						</font>
+					</td>
+<%
+				}
+				else
+				{
+%>
+					<td></td>
+<%
+				}
+				if(bStandardResults_withTitle)
+				{
+%>
+					<td align="left">
+						<a title="<%= StringUtils.XMLEscape(sQuickSummary) %>" href="<%= StringUtils.XMLEscape(sTitleURL) %>" target="<%= sTargetWindow %>">
+							<font class="<%= sNormalCSSClass %>" >
+								<b><%= StringUtils.XMLEscape(sTitle) %></b>&nbsp;
+							</font>
+						</a>
+					</td>
+<%
+				}
+%>
+				<!-- OPTIONS -->
+				<td nowrap align="right" >
+<%
+				if(bStandardResults_withContent)
+				{
+%>
+						<a href="<%= StringUtils.XMLEscape(sGetContentsURL) %>" target="<%= sTargetWindow %>"
+							><img alt="Contents" src="<%= sImageURL %>/content_normal.gif" border="0" width="9" height="12"
+						/></a>
+<%
+				}
+				if(bStandardResults_withHighlights)
+				{
+%>
+						<a href="<%= StringUtils.XMLEscape(sGetHighlightsURL) %>" target="<%= sTargetWindow %>"
+							><img alt="Highlighted contents" src="<%= sImageURL %>/content_highlighted.gif" border="0" width="9" height="12"
+						/></a>
+<%
+				}
+				if(bStandardResults_withConceptSummary)
+				{
+%>
+						<a href="<%= StringUtils.XMLEscape(sGetSummaryURL) %>" target="<%= sTargetWindow %>"
+							><img alt="Summary" src="<%= sImageURL %>/content_summary.gif" border="0" width="9" height="12"
+						/></a>
+<%
+				}
+				if(bStandardResults_withAgent)
+				{
+%>
+						<a href="<%= StringUtils.XMLEscape(sbCreateAgentActURL.toString()) %>" target="<%= sTargetWindow %>"
+							><img alt="Create an agent based on this story" src="<%= sImageURL %>/monitorstory.gif" border="0"
+						/></a>
+<%
+				}
+				if(bStandardResults_withMail)
+				{
+%>
+
+						<a href="<%= StringUtils.XMLEscape(sbEmailResultActURL.toString())%>" target="<%= sTargetWindow %>"
+							><img alt="Email this link" src="<%= sImageURL %>/maillink2friend.gif" border="0"
+						/></a>
+<%
+				}
+%>
+				</td>
+			</tr>
+			<tr>
+				<td></td>
+<%
+				if(bStandardResults_withDatabase)
+				{
+%>
+					<td align="left" valign="middle">
+						<img hspace="6" src="<%= sFileImagePath %>"/>
+					</td>
+<%
+				}
+				else
+				{
+%>
+					 <td>
+						<img src="<%= sImageURL %>/spacer.gif" alt="">
+					 </td>
+<%
+				}
+
+				if(bStandardResults_withSummary)
+				{
+%>
+					<td colspan="3" align="left">
+						<font class="<%= sNormalCSSClass %>">
+							<%=StringUtils.XMLEscape(sSummary)%>
+						</font>
+					</td>
+<%
+				}
+%>
+			</tr>
+			<tr>
+				<td colspan="2">
+				</td>
+				<td>
+					<font class="<%= sNormalCSSClass %>">
+						<%= sbDetailedInfo.toString() %>
+					</font>
+				</td>
+			</tr>
+<%
+			if(bStandardResults_withSimilar)
+			{
+%>
+				<tr>
+					<td colspan="2">
+					</td>
+					<td>
+						<font class="<%= sNormalCSSClass %>">
+							<a href="javascript:void(0);" onClick="window.open('<%= JavaScriptUtils.escape(sbAutoSuggestSuggestActURL.toString()) %>', 'similarResults', 'fullscreen=no,toolbar=no,status=no,menubar=no,scrollbars=no,resizable=no,directories=no,location=no,width=800,height=270,left=100,top=100', false);">
+								<strong><%=rb.getString("standardResult_include.similarDoc")%></strong>
+							</a>
+						</font>
+					</td>
+					<td>
+					</td>
+				</tr>
+<%
+			}
+%>
+			<tr><td height="6"></td></tr>
+<%
+		// this fixes an intermittent problem with multi-byte characters which causes the
+		// result entries and some html formatting to be sent to the browser in the wrong
+		// order
+		out.flush();
+
+		// move on to next entry
+		AciResponse acirNext = acirSingleResult.next();
+		acirSingleResult = acirNext != null ? acirNext.findFirstOccurrence("autn:hit") : null;
+	}
+}
+%>
+
+<%!
+private StringBuffer buildDetailedInfo(String sSource, String sAuthor, int nSizeInKB, ResourceBundle rb)
+{
+	StringBuffer sbDetailedInfo = new StringBuffer();
+	if(StringUtils.strValid(sSource))
+	{
+		sbDetailedInfo.append("[");
+		try
+		{
+			String source = rb.getString("standardResults_include.source");
+			sbDetailedInfo.append(source);
+		}
+		catch(Exception e)
+		{
+		}
+		sbDetailedInfo.append(" ");
+		sbDetailedInfo.append(sSource);
+		sbDetailedInfo.append("]&nbsp;");
+	}
+	if(StringUtils.strValid(sAuthor))
+	{
+		sbDetailedInfo.append("[");
+		try
+		{
+			String author = rb.getString("standardResults_include.author");
+			sbDetailedInfo.append(author);
+		}
+		catch(Exception e)
+		{
+		}
+		sbDetailedInfo.append(" ");
+		sbDetailedInfo.append(sAuthor);
+		sbDetailedInfo.append("]&nbsp;");
+	}
+	if(nSizeInKB > 0)
+	{
+		sbDetailedInfo.append("[");
+		try
+		{
+			String size = rb.getString("standardResults_include.size");
+			sbDetailedInfo.append(size);
+		}
+		catch(Exception e)
+		{
+		}
+		sbDetailedInfo.append(" ");
+		sbDetailedInfo.append(nSizeInKB);
+		sbDetailedInfo.append(" kB]");
+	}
+	return sbDetailedInfo;
+}
+
+private String getImagePathFromIconValue(String sIconValue, String sImageURL, String sDefaultImageFile, ServletContext application, PortalService service)
+{
+	// default image path - returned if no image corresponding to the icon name is found
+	String sImagePath = sImageURL + "/" + sDefaultImageFile;
+
+	if(StringUtils.strValid(sIconValue))
+	{
+		// there are 3 possible types of icon value:
+		//	- extension name with leading '.' (remove leading '.' and add .gif extension)
+		//	- data source name without extension (add .gif extension)
+		// 	- data source name with extension (do nothing)
+
+		if(sIconValue.startsWith("."))
+		{
+			sIconValue = sIconValue.substring(1, sIconValue.length());
+		}
+
+		// add gif extension to icon name if it does not have one
+		if(!sIconValue.endsWith(".gif"))
+		{
+			sIconValue = sIconValue + ".gif";
+		}
+
+		// see if a file corresponding to the extension exists - the path to the image files depends on where this file
+		// has been included.
+		String sFilePath = "";
+		if(service != null)
+		{
+			// displaying from inside a portlet
+			if(service instanceof PiB4ServiceInterface)
+			{
+				sFilePath = new StringBuffer("/portlets/AutonomyImages/")
+										  .append(sIconValue)
+								 .toString();
+			}
+			else
+			{
+				// TODO : how to get file path in non-PiB portlets?
+			}
+		}
+		else
+		{
+			// displaying from popup
+			sFilePath = new StringBuffer("/portlets/AutonomyImages/")
+									  .append(sIconValue)
+							 .toString();
+		}
+
+		// work out URL to image file
+		if(new File(application.getRealPath(sFilePath)).exists())
+		{
+			sImagePath = sImageURL + "/" + sIconValue;
+		}
+		else
+		{
+			// use default provided
+		}
+	}
+
+	return sImagePath;
+}
+
+private static String getTitleFromSummary(String sSummary)
+{
+	String sTitle = "";
+	int nEndTitleIdx = 80;
+	if(nEndTitleIdx > sSummary.length() - 1)
+	{
+		nEndTitleIdx = sSummary.length() - 1;
+	}
+	if(nEndTitleIdx > 0)
+	{
+		sTitle = sSummary.substring(0, nEndTitleIdx);
+	}
+	else
+	{
+		sTitle = "";
+	}
+	return sTitle;
+}
+
+/**
+ *	Establishes whether a document came from a database that contains DocMan documents as
+ *	configured by the DocManDatabases portlet parameter.
+ */
+private static boolean resultIsDocManDocument(String sSource, PortalService service)
+{
+	boolean bIsDocManDoc = false;
+	String sDocManDatabases = service.readConfigParameter("DocManDatabases", "");
+	if(StringUtils.strValid(sDocManDatabases))
+	{
+		// result is a DocMan doc if its source is one of those databases in the DocManDatabases CSV
+		int nSourceIdx = StringUtils.isStringInStringArray(StringUtils.split(sDocManDatabases, ","),
+																										 	sSource,
+																										 	true);
+		bIsDocManDoc = nSourceIdx != -1;
+	}
+
+	return bIsDocManDoc;
+}
+%>

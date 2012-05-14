@@ -1,0 +1,156 @@
+<form name="movecategory" action="<%=service.makeFormActionLink("")%>" method="POST">
+	<%= service.makeAbstractFormFields() %>
+	<input type="hidden" name="<%= CATConstants.REQUEST_PARAM_PAGE %>" value="<%= CATConstants.JSP_PAGE_CAT_MOVE %>">
+	<input type="hidden" name="<%= CATConstants.REQUEST_PARAM_MOVE_FROM %>" value="">
+	<input type="hidden" name="<%= CATConstants.REQUEST_PARAM_MOVE_TO %>" value="">
+</form>
+<style>
+	<!--
+	.dragable{position:relative;cursor:hand}
+	-->
+</style>
+
+<div id="dummy" style="position:absolute;visibility:hidden"></div>
+
+<script language="javascript">
+
+	document.expando = false;
+
+	var sSelected = "";
+	var dragok = false;
+	var startX = 0;
+	var startY = 0;
+	var mouseDownX = 0;
+	var mouseDownY = 0;
+	var thisElement = dummy;
+
+
+	// turns "   aaa bbb   " into "aaa bbb"
+	function topNtailWhiteSpace(str)
+	{
+		var ret = str;
+		// top
+		while (ret.length > 0 && ret.charAt(0) == ' ')
+		{
+			ret = ret.substring(1);
+		}
+
+		// tail
+		while (ret.length > 0 && ret.charAt(ret.length-1) == ' ')
+		{
+			ret = ret.substring(0,ret.length-1);
+		}
+
+		return ret;
+	}
+
+	function mouseMove()
+	{
+		if (event.button==1 && dragok)
+		{
+			thisElement.style.pixelLeft = startX + event.clientX - mouseDownX;
+			thisElement.style.pixelTop = startY + event.clientY - mouseDownY;
+
+			/*
+			if (event.srcElement.className == "dragable")
+			{
+				currentHoverElement = event.srcElement;
+			}
+			*/
+
+			return false;
+		}
+	}
+
+	function mouseDown()
+	{
+		if (!document.all) // msie only
+			return false;
+
+		// only valid for dragable elements
+		if (event.srcElement.className == "dragable")
+		{
+			dragok = true;
+
+			thisElement = event.srcElement;
+
+			// set this element's zindex lower than the rest
+			//thisElement.style.zIndex = 0;
+
+			mouseDownX = event.clientX;
+			mouseDownY = event.clientY;
+
+			startX = thisElement.style.pixelLeft;
+			startY = thisElement.style.pixelTop;
+
+			document.onmousemove = mouseMove;
+		}
+	}
+
+	function mouseUp()
+	{
+		dragok=false;
+
+		// snap back the dragged element before checking where we are
+		if (thisElement != dummy)
+		{
+			thisElement.style.pixelLeft = startX
+			thisElement.style.pixelTop = startY
+			//thisElement.style.zIndex = 1;
+
+			var currentHoverElement = document.elementFromPoint(event.clientX, event.clientY);
+
+			// check whether we're above another one (not ourself)
+			if ((currentHoverElement.className == "dragable" || currentHoverElement.className == "rootnode")
+				&& currentHoverElement.id != thisElement.id)
+			{
+				// confirm category move
+				var fromName = thisElement.innerText;
+				var toName = currentHoverElement.innerText;
+
+				fromName = topNtailWhiteSpace(fromName);
+				toName = topNtailWhiteSpace(toName);
+
+				//if (confirm("Are you sure you want to move category '" + fromName + "' to category '" + toName + "'?"))
+				{
+					movecategory.movecatfrom.value = thisElement.id;
+					movecategory.movecatto.value = currentHoverElement.id;
+					movecategory.submit();
+				}
+			}
+		}
+
+		thisElement = dummy;
+		currentHoverElement = dummy;
+	}
+
+	function mouseOver(el)
+	{}
+
+	function linkMouseUp()
+	{
+		if (event.clientX == mouseDownX && event.clientY == mouseDownY)
+			return true
+		else
+			return false;
+	}
+
+	function clean()
+	{
+		document.debugform.debug.value = "";
+	}
+
+	function debug(x)
+	{
+		document.debugform.debug.value = "\n" + document.debugform.debug.value + x;
+	}
+
+	document.onmousedown = mouseDown;
+	document.onmouseup = mouseUp;
+
+	function mouseOutTable()
+	{
+		sSelected = "";
+	}
+
+</script>

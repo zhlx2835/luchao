@@ -1,0 +1,39 @@
+<%@ page import = "java.util.*" %>
+<%@ page import = "java.io.*" %>
+<%@ page import = "java.net.*" %>
+<%@ page import="com.autonomy.portal4.*" %>
+<%@ page import="com.autonomy.utilities.*" %>
+<%
+request.setCharacterEncoding("utf-8");
+response.setContentType("text/html; charset=utf-8");
+%>
+
+<%@ include file = "/user/include/getBackendLocation_include.jspf" %>
+
+<%
+PortalInfo CurrentPortal = PortalDistributor.getInstance(BACKEND_LOCATION);
+if( CurrentPortal == null )
+{
+	out.println("There has been an error.  Please close this browser and try visiting the portal site in a new one");
+	out.flush();
+	return;
+}
+RolesInfo CurrentRoles = CurrentPortal.getRolesObject();
+//
+//switch session to session object
+//
+UserInfo CurrentUser = (UserInfo) session.getAttribute(CurrentPortal.PORTAL_BACKEND_LOCATION + "CurrentUser");
+PortletInfo ParentPortlet = (PortletInfo) CurrentUser.getAttribute("ParentPortlet");
+UserPageInfo CurrentPage = (UserPageInfo) CurrentUser.getAttribute("CurrentPage");
+PortletInfo CurrentPortlet = (PortletInfo) CurrentUser.getAttribute("CurrentPortlet");
+//
+//To allow support for the extraction of panes, set up the variables here and use only these "accessor" varibles
+//inside the pane itself.
+//
+String sPortlet_borderColor = CurrentPortlet.getPortletBorderColor();
+String sPortlet_HeaderColor = CurrentPortlet.getPortletHeaderColor();
+String sPortlet_background = CurrentPortlet.getPortletBackground();
+String sPortlet_buttonStyle = CurrentPage.getButtonStyle();
+String sPortlet_formHref = request.getContextPath() + "/user/home/home.jsp";
+String sPortlet_key = CurrentPortlet.getPortletKey();
+%>

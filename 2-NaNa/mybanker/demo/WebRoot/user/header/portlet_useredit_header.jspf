@@ -1,0 +1,117 @@
+<%@ page import = "java.util.*" %>
+<%@ page import = "java.io.*" %>
+<%@ page import = "java.net.*" %>
+<%@ page import = "com.autonomy.portal4.*" %>
+<%@ page import = "com.autonomy.utilities.*" %>
+<%
+request.setCharacterEncoding("utf-8");
+response.setContentType("text/html; charset=utf-8");
+%>
+
+<%@ include file = "/user/include/getPortletVars_include.jspf" %>
+
+<%!
+// Array to hold portlet styles
+private static String[] portlet_styles = new String[] {"blue.css", "green.css", "red.css"};
+%>
+
+<%
+PortletInfo EditPortlet = (PortletInfo) CurrentUser.getAttribute("CurrentPortlet");
+AllPortlets allPortlets = CurrentPortal.getAllPortletsObject();
+CurrentPortal.LogFull("portlet_useredit:  Found portlet " + EditPortlet.getPortletName() );
+//
+//Post-compile include, is the user-editable functionality for this pane
+//Get number of pane to be edited and display info, and pane list as per users role
+//
+int iPageNo = CurrentPage.PAGE_NUMBER;
+int iPortletNo = EditPortlet.PORTLET_NUMBER;
+String sError = "";
+String[] sPortletList = null;
+if(EditPortlet == null)
+{
+	//
+	//Define pane from fresh to ensure it cannot be null
+	//
+	try
+	{
+		EditPortlet = new PortletInfo(CurrentUser, CurrentPage, iPortletNo);
+	}
+	catch(Exception e)
+	{
+		CurrentPortal.Log("portlet_useredit_header: User asked to edit a non-existent pane - " + e.toString());
+		sError = "Could not find pane to edit!";
+	}
+}
+session.setAttribute("EditPortlet", EditPortlet);
+
+try
+{
+	sPortletList = CurrentRoles.getUserPrivilege(CurrentUser.getUserName(), "panes_viewable", true);
+}
+catch(Exception e)
+{
+	sError = "Failed To read user pane list";
+}
+if(sPortletList == null)
+	sError = "This user has a role which does not exist";
+
+if(sError.length() == 0)
+{
+	//No error get pane name, if empty, use "no_pane" instead
+	//
+	String sEditPortletName = EditPortlet.getPortletName();
+	if(!StringUtils.strValid(sEditPortletName))
+	{
+		sEditPortletName = "no_pane";
+	}
+	//
+	//Confirm user has privilege to edit this pane
+	//
+	if(!CurrentRoles.hasUserGotPrivilege(CurrentUser.getUserName(), "panes_editable",  sEditPortletName, true) )
+	{
+%>
+		<br /><font class="normalbold" ><center>There are no user editable settings for this pane
+		<br /><br />
+		<a class="textButton" title="Home" href="home.jsp">
+			Ok
+		</a>
+		</center>
+<%
+	}
+	else
+	{
+		String sState = StringUtils.nullToEmpty( (String) CurrentUser.getAttribute("useredit_state") );
+		String sFormAction = null;
+		if( !sState.equals("specific") )
+		{
+			sFormAction = request.getContextPath() + "/user/home/portlet_useredit_submit.jsp";
+		}
+		else
+		{
+			sFormAction = request.getContextPath() + "/portlet/" + EditPortlet.getPortletName() + "/" + EditPortlet.getPortletName() + "_useredit_submit.jsp";
+		}
+
+		String sBackground = EditPortlet.getPortletBackground();
+		if ((sBackground !=null) && (!sBackground.equals("")) && (sBackground.length()> 16) )
+		{
+			sBackground = sBackground.substring(9, 16);
+		}
+%>
+
+		<script type="text/javascript">
+			<!--	
+				function setOkPressed()
+				{
+					form_<%=EditPortlet.getPortletKey()%>_editSettings.okPressed.value="true";
+					form_<%=EditPortlet.getPortletKey()%>_editSettings.submit();						
+				}
+			//-->				
+		</script>
+
+		<form name="form_<%=EditPortlet.getPortletKey()%>_editSettings" 
+			  action="<%=sFormAction%>" 
+			  method="POST">
+			<input type="hidden" name="paneKey" value="<%=EditPortlet.getPortletKey()%>" />
+			<input type="hidden" name="okPressed" value="false" />
+
+			<table width="100%" border="0" cellpadding="0" cellspacing="0" align="center">			

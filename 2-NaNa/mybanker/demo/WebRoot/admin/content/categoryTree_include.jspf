@@ -1,0 +1,434 @@
+<%@ page import="java.util.*"%>
+<%@ page import="javax.servlet.http.*"%>
+<%@ page import="java.io.UnsupportedEncodingException"%>
+<%@ page import="com.autonomy.utilities.*"%>
+<%@ page import="com.autonomy.APSL.*"%>
+<%@ page import="com.autonomy.portlet.constants.*"%>
+<%@ page import="com.autonomy.aci.businessobjects.*"%>
+<%@ page import="com.autonomy.aci.services.IDOLService"%>
+<%@ page import="com.autonomy.aci.services.UserFunctionality"%>
+<%@ page import="com.autonomy.aci.services.ChannelsFunctionality"%>
+<%@ page import="com.autonomy.aci.exceptions.UserNotFoundException"%>
+<%@ page import="com.autonomy.aci.exceptions.AciException"%>
+<%@ page import="com.autonomy.aci.exceptions.InvalidCategoryException"%>
+<%@ page contentType="text/html; charset=utf-8" %>
+
+<%
+request.setCharacterEncoding("utf-8");
+response.setContentType("text/html; charset=utf-8");
+%>
+<%
+if(idol==null)
+{
+String PORTLET_NAME = "default";
+PortalService service = ServiceFactory.getService((Object)request, (Object)response, (Object)PORTLET_NAME);
+updateIDOLSessionAttribute(session, service);   
+}
+// read request parameters 
+ArrayList alExpandedCatID = updateExpandedCatIDList(request, session);
+String sSelectedCatID 		= getSelectedCatID(request, session);
+
+// get category hierarchy, either from session if it there or by reading from Laune if it isn't
+Category topCategory = getCategoryHierarchy(session, sUserName);
+
+// if we have a category hierarchy, display it
+if(topCategory != null)
+{
+%>
+	<script type="text/javascript">
+	<!--
+		function submitSelectChannel(id)
+		{	
+			document.selectChannel.<%= makeParameterName(ChannelsConstants.REQUEST_PARAM_SELECTED_ID) %>.value=id;
+
+			document.selectChannel.submit();
+		}
+
+		function submitExpandChannel(id)
+		{	
+			document.expandChannel.<%= makeParameterName(ChannelsConstants.REQUEST_PARAM_EXPAND_CONTRACT_ID) %>.value=id;
+
+			document.expandChannel.submit();
+		}
+
+		function submitContractChannel(id)
+		{
+			document.contractChannel.<%= makeParameterName(ChannelsConstants.REQUEST_PARAM_EXPAND_CONTRACT_ID) %>.value=id;
+
+			document.contractChannel.submit();
+		}	
+	-->	
+	</script>
+
+    <tr>
+        <td nowrap="nowrap">
+            <form name="selectChannel" action="" method="POST">
+                    <%= makeAbstractFormFields() %>	
+                    <input type="hidden" name="<%= makeParameterName(ChannelsConstants.REQUEST_PARAM_SELECTED_ID) %>" value="" />			
+            </form>
+
+            <form name="expandChannel" action="" method="POST">
+                    <%= makeAbstractFormFields() %>				
+                    <input type="hidden" name="<%= makeParameterName(ChannelsConstants.REQUEST_PARAM_ACTION) %>" value="<%= ChannelsConstants.CAT_ACTION_EXPAND %>" />
+                    <input type="hidden" name="<%= makeParameterName(ChannelsConstants.REQUEST_PARAM_EXPAND_CONTRACT_ID) %>" value="" />			
+            </form>
+
+            <form name="contractChannel" action="" method="POST">
+                    <%= makeAbstractFormFields() %>		
+                    <input type="hidden" name="<%= makeParameterName(ChannelsConstants.REQUEST_PARAM_ACTION) %>" value="<%= ChannelsConstants.CAT_ACTION_CONTRACT %>" />
+                    <input type="hidden" name="<%= makeParameterName(ChannelsConstants.REQUEST_PARAM_EXPAND_CONTRACT_ID) %>" value="" />			
+            </form>        
+        </td>
+    </tr>
+    <%=	printChildLevel(topCategory, 
+                                            sSelectedCatID, 
+                                            alExpandedCatID, 
+                                            0, 
+                                            makeLink(request, "AutonomyImages"),
+                                            makeFormActionLink(request, ""),
+                                            session, 
+                                            sUserName
+                                         ) %>
+<%
+}
+// if no category hierarchy, display error message
+else
+{
+	out.println("Could not load category hierarchy");
+}
+%>
+<%!
+public String printChildLevel(Category category, 
+															String sSelectedCatID, 
+															ArrayList alExpandedCatID, 
+															int nLevel, 
+															String sImageURL, 
+															String sDisplayURI, 
+															HttpSession session,
+															String sUserName
+														 )
+{
+	StringBuffer sbReturn = new StringBuffer();
+
+	if (category != null)
+	{		
+		String sName 							= category.getName();
+		String sID 								= category.getUID();
+		String sCatStatus 				= category.getStatus();
+		ArrayList alSubCategories = category.getSubCategories();
+		boolean bExpanded		= alExpandedCatID.contains(sID);
+
+		// if there are no sub-categories it may be because they have not been read in from IDOL so
+		// try to read them now
+		if(alSubCategories.size() == 0)
+		{
+			alSubCategories = readCatHierarchy(session, category, sUserName).getSubCategories();				
+			// set sub-cats on category so we don't have to read them again
+			category.setSubCategories(alSubCategories);
+		}
+
+		// start row for this category				
+		sbReturn.append("<tr><td nowrap=\"nowrap\">");
+		// indent
+		for (int ii=0; ii<nLevel; ii++)
+		{
+			sbReturn.append("&nbsp;&nbsp;&nbsp;&nbsp;");
+		}
+		
+		// expand/contract icon
+		boolean bIsHomeCategory = sID.equals("0");
+		if(alSubCategories.size() > 0 && !bIsHomeCategory)
+		{
+			if(bExpanded)
+			{
+				sbReturn.append("<a href=\"").append("javascript:submitContractChannel(\'").append(sID).append("\');\">")
+									.append("<img src=\"").append(sImageURL).append("/contract.gif\" border=\"0\" alt=\"Expand this category\" >")
+								.append("</a>");
+			}
+			else
+			{
+				sbReturn.append("<a href=\"javascript:submitExpandChannel(\'").append(sID).append("\');\">")
+									.append("<img src=\"").append(sImageURL).append("/expand.gif\" border=\"0\" alt=\"Contract this category\" >")
+								.append("</a>");
+			}
+		}
+		else
+		{
+			sbReturn.append("<img src=\"").append(sImageURL).append("/nochildren.gif\" border=\"0\">");
+		}
+
+		boolean bSelected 		= sID.equals(sSelectedCatID);
+		String sFontStyle 		= (bSelected)?(" style=\";font-weight:bold\" "):("");
+		String sFolderImage 	= getFolderImageFromStatus(sCatStatus, sImageURL);
+		String sFolderToolTip = getFolderToolTipFromStatus(sCatStatus);
+
+		StringBuffer sbCatMovingJavaScript = new StringBuffer();
+
+/*
+NOT CURRENTLY IMPLEMENTED
+		sbCatMovingJavaScript.append(" class=\"dragable\" id=\"").append(sID)
+												 .append("\" onClick=\"javascript:return linkMouseUp()\" ")
+												 .append("onMouseOver=\"javascript:mouseOver(this)\" ");
+*/
+		sbReturn.append("<a ").append(sFontStyle).append(sbCatMovingJavaScript.toString())
+						.append("href=\"javascript:submitSelectChannel(\'").append(sID).append("\');\">")
+							.append("<img border=\"0\" src=\"").append(sFolderImage).append("\" alt=\"").append(sFolderToolTip).append("\" />")
+							.append("&nbsp;").append(sName).append("</a>");
+
+		// finish category row		
+		sbReturn.append("</td></tr>\n");
+
+		// recurse through children if category has been expanded
+		if(bExpanded)
+		{
+			Iterator itSubCategories = category.getSubCategories().iterator();
+			while(itSubCategories.hasNext())
+			{
+				sbReturn.append(printChildLevel((Category)itSubCategories.next(), 
+																				sSelectedCatID, 
+																				alExpandedCatID, 
+																				nLevel + 1, 
+																				sImageURL, 
+																				sDisplayURI, 
+																				session,
+																				sUserName
+																			 ));			
+			}
+		}
+	}
+
+	return sbReturn.toString();
+}
+
+private String getFolderToolTipFromStatus(String sStatus)
+{
+	String sToolTip = "Active";
+	return sToolTip;
+}
+
+private String getFolderImageFromStatus(String sStatus, String sImageURL)
+{
+	String sFolder = "folder.gif";
+	return sImageURL + "/" + sFolder;
+}
+
+private String getSelectedCatID(HttpServletRequest request, HttpSession session)
+{
+	// ID comes from either request or category session attribute, with request value overriding session value
+	String sSelectedCatID = getSafeRequestParameter(request, makeParameterName(ChannelsConstants.REQUEST_PARAM_SELECTED_ID), "");
+	if(!StringUtils.strValid(sSelectedCatID))
+	{
+		// no ID in request, read ID from category in session if there is one
+		Category selectedCategory = (Category)session.getAttribute(ChannelsConstants.SESSION_ATTRIB_SELECTED_CAT);
+		if(selectedCategory != null)
+		{
+			sSelectedCatID = selectedCategory.getUID();
+		}
+	}
+	// default to home category
+	if(sSelectedCatID == null)
+	{
+		sSelectedCatID = "0";
+	}	
+	return sSelectedCatID;
+}
+
+private ArrayList updateExpandedCatIDList(HttpServletRequest request, HttpSession session)
+{
+	ArrayList alExpandedCatIDs = null;
+
+	// are we expanding or contracting a category?
+	String sCatID  = getSafeRequestParameter(request, makeParameterName(ChannelsConstants.REQUEST_PARAM_EXPAND_CONTRACT_ID), "");
+	String sAction = getSafeRequestParameter(request, makeParameterName(ChannelsConstants.REQUEST_PARAM_ACTION), "");
+
+	if(sAction.equals(ChannelsConstants.CAT_ACTION_EXPAND))
+	{
+		alExpandedCatIDs = addCategoryToExpandedList(session, sCatID);
+	}
+	else if(sAction.equals(ChannelsConstants.CAT_ACTION_CONTRACT))
+	{
+		alExpandedCatIDs = removeCategoryFromExpandedList(session, sCatID);
+	}
+	else
+	{
+		alExpandedCatIDs = (ArrayList)session.getAttribute(ChannelsConstants.SESSION_ATTRIB_EXPANDED_CAT_IDS);
+	}
+	// make sure the list is not null
+	if(alExpandedCatIDs == null)
+	{
+		alExpandedCatIDs = initialiseExpandedList();
+	}
+	// set on session and return
+	session.setAttribute(ChannelsConstants.SESSION_ATTRIB_EXPANDED_CAT_IDS, alExpandedCatIDs);
+
+	return alExpandedCatIDs;
+}
+
+private ArrayList removeCategoryFromExpandedList(HttpSession session, String sCatID)
+{
+	// get expanded cat list from session, create new list if none found
+	ArrayList alExpandedCatIDs = (ArrayList)session.getAttribute(ChannelsConstants.SESSION_ATTRIB_EXPANDED_CAT_IDS);
+	if(alExpandedCatIDs != null)
+	{
+		// add cat id to expanded list if not already there
+		if(alExpandedCatIDs.contains(sCatID))
+		{
+			alExpandedCatIDs.remove(sCatID);
+		}
+
+		// set updated list on session 
+		session.setAttribute(ChannelsConstants.SESSION_ATTRIB_EXPANDED_CAT_IDS, alExpandedCatIDs);
+	}	
+
+	return alExpandedCatIDs;
+}
+
+private ArrayList addCategoryToExpandedList(HttpSession session, String sCatID)
+{
+	// get expanded cat list from session, create new list if none found
+	ArrayList alExpandedCatIDs = (ArrayList)session.getAttribute(ChannelsConstants.SESSION_ATTRIB_EXPANDED_CAT_IDS);
+	if(alExpandedCatIDs != null)
+	{
+		// add cat id to expanded list if not already there
+		if(!alExpandedCatIDs.contains(sCatID))
+		{
+			alExpandedCatIDs.add(sCatID);
+		}
+
+		// set updated list on session 
+		session.setAttribute(ChannelsConstants.SESSION_ATTRIB_EXPANDED_CAT_IDS, alExpandedCatIDs);
+	}
+	
+	return alExpandedCatIDs;
+}
+
+private ArrayList initialiseExpandedList()
+{
+	ArrayList alExpandedCatIDs = new ArrayList();
+	// always expand the home category
+	alExpandedCatIDs.add(Category.HOME_CATEGORY_ID);
+	return alExpandedCatIDs;
+}
+
+private Category getCategoryHierarchy(HttpSession session, String sUserName)
+{
+	// read category hierarchy from session, read new cat hierarchy from Laune if none found
+	Category catHierarchy = (Category)session.getAttribute(ChannelsConstants.SESSION_ATTRIB_CAT_HIERARCHY);
+
+	if(catHierarchy == null)
+	{
+		// no cat hierarchy set on session create top most one
+		catHierarchy = readCatHierarchy(session, new Category("0"), sUserName);
+	}
+	if(catHierarchy != null)
+	{
+		session.setAttribute(ChannelsConstants.SESSION_ATTRIB_CAT_HIERARCHY, catHierarchy);
+	}
+
+	return catHierarchy;
+}
+
+private Category readCatHierarchy(HttpSession session, Category category, String sUserName)
+{
+	Category catTree = null;
+	// retrieve Laune service from session 
+	IDOLService idol = (IDOLService)session.getAttribute(CATConstants.SESSION_ATTRIB_IDOL);
+    // Get user details    
+    //String sUsername = (service.getUser()).getName();
+	if(idol != null)
+	{
+		try
+		{
+			catTree = idol.useChannelsFunctionality().getCategoryHierarchy(category, false, sUserName);
+		}
+		catch(InvalidCategoryException ice)
+		{
+		 	// root category is invalid!
+			//setError(session, "The Laune service appears to be corrupted. Please check the Laune component of IDOL server as soon as possible.");		
+		}
+		catch(AciException acie)
+		{
+		 	// root category is invalid!
+			//setError(session, "There was a problem in communicating with the Laune service. <br />Error message: " + acie.getMessage());		
+		}
+	}		
+	else
+	{
+		session.setAttribute(ChannelsConstants.SESSION_ATTRIB_ERROR_MESSAGE, "The Laune service could not be found. Please try again.");		
+	}
+	return catTree;
+}
+
+public String makeParameterName(String szParameterName)
+{
+    StringBuffer name = new StringBuffer();
+
+    if(szParameterName != null)
+    {
+        name.append("param_").append(StringUtils.javaScriptEscape(szParameterName));
+    }
+    return name.toString();
+}
+
+public String makeFormActionLink(HttpServletRequest request, String szDummy)
+{
+    return new StringBuffer().append(request.getContextPath()).append("/admin/home/menuFrameset.jsp#").toString();
+}
+
+public String getRequestParameter(HttpServletRequest request, String szParamName)
+{
+    return request.getParameter( szParamName );
+}
+
+public String getSafeRequestParameter(HttpServletRequest request, String sName, String sDefault)
+{
+    String sValue = getRequestParameter(request, sName );
+
+    if(sValue == null)
+        sValue = sDefault;
+
+    return sValue;
+}
+
+public String makeAbstractFormFields()
+{
+    return " ";
+}
+
+public String makeLink(HttpServletRequest request, String s)
+{
+    return new StringBuffer().append(request.getContextPath()).append("/portlets/").append(s).toString();
+}
+
+private void updateIDOLSessionAttribute(HttpSession session, PortalService service) throws UnsupportedEncodingException
+{
+	if(session != null && service != null)
+	{
+		// try to retrieve Laune attribute from session
+		IDOLService idol = (IDOLService)session.getAttribute(CATConstants.SESSION_ATTRIB_LAUNE);
+		// if attribute does not exists, read host and port info from config and create one
+		if(idol == null)
+		{
+			idol = service.getIDOLService();
+		}
+		
+		// set Laune attribute on session
+		if(idol != null)
+		{
+			session.setAttribute(CATConstants.SESSION_ATTRIB_IDOL, idol);
+		}
+		else
+		{
+			//setError(session, "No IDOL service was found and one could not be created.");
+		}			
+	}
+}
+
+private void mylog(String s)
+{
+	System.out.println(s);
+}
+%>
+
+
+

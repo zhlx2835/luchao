@@ -1,0 +1,19 @@
+<%@ page import="com.autonomy.utilities.StringUtils"%>
+
+
+<%
+	// look for error message in session, display if one exists
+	String sErrorMessage = (String)session.getAttribute(RetrievalConstants.SESSION_ATTRIB_ERROR_MESSAGE);
+	
+	if(StringUtils.strValid(sErrorMessage))
+	{
+		session.removeAttribute(RetrievalConstants.SESSION_ATTRIB_ERROR_MESSAGE);
+%>
+		<table>
+			<tr><td>
+				<font color="red"><strong><%= sErrorMessage %></strong></font>
+			</td></tr>
+		</table>
+<%
+	}
+%>

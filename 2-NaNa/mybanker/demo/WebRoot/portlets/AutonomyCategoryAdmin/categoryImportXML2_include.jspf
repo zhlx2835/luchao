@@ -1,0 +1,87 @@
+<%@ page import="com.autonomy.portlet.constants.CATConstants"%>
+<%@ page import="com.autonomy.portlet.constants.ChannelsConstants"%>
+<%@ page import="com.autonomy.aci.businessobjects.Category"%>
+<%@ page import="com.autonomy.aci.exceptions.InvalidImportFileException"%>
+
+<%
+// this page creates a imports an category definition xml file into the given category on Laune.
+
+// put everything in this page in its own scope so as not to interfere with other included pages
+{
+	// get parent category from session
+	Category category = (Category)session.getAttribute(CATConstants.SESSION_ATTRIB_SELECTED_CAT);
+
+	if(category == null)
+	{
+		setError(session, rb.getString("categoryView.error.noCatSelected"));
+		sMainPage = CATConstants.JSP_PAGE_MAIN;
+	}
+
+	// get IDOL Service from session
+	IDOLService idol = (IDOLService)session.getAttribute(CATConstants.SESSION_ATTRIB_IDOL);
+	if(idol == null)
+	{
+		setError(session, rb.getString("categoryView.error.noChFuncAvailable"));
+		sMainPage = CATConstants.JSP_PAGE_MAIN;
+	}
+%>
+
+<%@ include file="showError_include.jspf" %>
+
+<%
+	if(category != null && idol != null)
+	{
+		// read path to xml file from request
+		String sXMLFilePath = request.getParameter(service.makeParameterName(CATConstants.REQUEST_PARAM_IMPORT_FILE));
+		if(StringUtils.strValid(sXMLFilePath))
+		{
+			try
+			{
+                // Get user details
+                String sUsername = (service.getUser()).getName();
+
+				// import categories
+				idol.useChannelsFunctionality().importCategoriesFromXML(sXMLFilePath, category, sUsername);
+
+				// invalidate category hierarchy in session as this needs to be re-read from Laune
+				session.removeAttribute(CATConstants.SESSION_ATTRIB_CAT_HIERARCHY);
+				session.removeAttribute(ChannelsConstants.SESSION_ATTRIB_CAT_HIERARCHY);
+
+				// add the parent category to the expanded category list so the new subcategories will be visible
+				addCategoryToExpandedList(session, category.getUID());
+
+				// go to category selected page
+				sMainPage = CATConstants.JSP_PAGE_CAT_SELECTED;
+			}
+			catch(InvalidImportFileException iife)
+			{
+				setError(session, (rb.getString("categoryImportXML2_include.errorImporting")) + category.getName() + (rb.getString("categoryImportXML2_include.XMLNotValid")));
+				// give chance to try again
+				sMainPage = CATConstants.JSP_PAGE_CAT_IMPORT_XML_1;
+			}
+			catch(InvalidCategoryException ice)
+			{
+				setError(session, (rb.getString("categoryImportXML2_include.errorImporting")) + category.getName() + (rb.getString("categoryCreateSubCat2_include.catInvalid")));
+				// invalide the selected parentCategory session attributes as either it no longer exists or
+				// we want user to start selecting a new parentCategory
+				session.removeAttribute(CATConstants.SESSION_ATTRIB_SELECTED_CAT);
+				// try to select the desired category again
+				sMainPage = CATConstants.JSP_PAGE_MAIN;
+			}
+			catch(AciException acie)
+			{
+				setError(session, (rb.getString("categoryImportXML2_include.errorImporting")) + category.getName() + (rb.getString("categoryCreateSubCat2_include.errorIs")) + acie.getMessage());
+				// try again
+				sMainPage = CATConstants.JSP_PAGE_CAT_IMPORT_XML_1;
+			}
+		}	// if(StringUtils.strValid(sNewSubCatName))
+		else
+		{
+			setError(session, (rb.getString("categoryImportXML2_include.noXMLGiven")));
+			// try to get category name again
+			sMainPage = CATConstants.JSP_PAGE_CAT_IMPORT_XML_1;
+		}
+	}
+}
+%>
+

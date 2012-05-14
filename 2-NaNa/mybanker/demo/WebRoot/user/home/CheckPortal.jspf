@@ -1,0 +1,52 @@
+<%
+request.setCharacterEncoding("utf-8");
+response.setContentType("text/html; charset=utf-8");
+%>
+
+<%@include file = "/user/include/getBackendLocation_include.jspf" %>
+<%
+
+//
+//Multiple PortalInfos are handled by the PortalDistributor, and are identified by the BACKEND_LOCATION
+//
+PortalInfo CurrentPortal = PortalDistributor.getInstance(BACKEND_LOCATION);
+if(CurrentPortal == null)
+{
+	// do one time initialization of portal
+	try
+	{
+		System.out.println("Trying to initialise Portal-in-a-Box 4..");
+
+		//
+		//Create an entry for this portal
+		//
+		PortalDistributor.initialise(BACKEND_LOCATION);
+	}
+	catch(Exception e)
+	{
+		// log exception and throw out to handler page
+		System.out.println("Portal-in-a-Box failed to initialise - reason: ");
+		e.printStackTrace( System.out );
+		throw e;
+	}
+	
+	//
+	//Now we know we can read it
+	//
+	CurrentPortal = PortalDistributor.getInstance(BACKEND_LOCATION);
+	
+	//
+	// setup ACI action cache
+	//
+%>
+		<%@ include file = "/user/include/setupACICache_include.jspf" %>
+<%		
+
+	CurrentPortal.Log("Starting " + CurrentPortal.readString( CurrentPortal.PORTAL_SECTION, "OrganizationName", "Portal-in-a-Box 4") );
+	CurrentPortal.Log("");
+	CurrentPortal.Log("Welcome to Autonomy Portal-in-a-Box");
+	CurrentPortal.Log("");
+	CurrentPortal.Log("");
+}
+
+%>

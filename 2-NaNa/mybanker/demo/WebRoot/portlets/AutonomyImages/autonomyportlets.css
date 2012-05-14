@@ -1,0 +1,571 @@
+A.normal
+{
+    COLOR: #4e6790;
+    FONT-FAMILY: Arial, sans-serif;
+    FONT-SIZE: 8pt;
+    FONT-WEIGHT: normal;
+    TEXT-DECORATION: none
+}
+A.normal:link
+{
+    COLOR: #4e6790;
+    FONT-FAMILY: Arial, sans-serif;
+    FONT-SIZE: 8pt;
+    FONT-WEIGHT: normal;
+    TEXT-DECORATION: none
+}
+A.normal:visited
+{
+    COLOR: #4e6790;
+    FONT-FAMILY: Arial, sans-serif;
+    FONT-SIZE: 8pt;
+    FONT-WEIGHT: normal;
+    TEXT-DECORATION: none
+}
+A:visited
+{
+    COLOR: #4e6790;
+    FONT-FAMILY: Arial, sans-serif;
+    FONT-SIZE: 8pt;
+    FONT-WEIGHT: normal;
+    TEXT-DECORATION: none
+}
+A
+{
+    COLOR: #4e6790;
+    FONT-FAMILY: Arial, sans-serif;
+    FONT-SIZE: 8pt;
+    FONT-WEIGHT: normal;
+    TEXT-DECORATION: none
+}
+A:link
+{
+    COLOR: #4e6790;
+    FONT-FAMILY: Arial, sans-serif;
+    FONT-SIZE: 8pt;
+    FONT-WEIGHT: normal;
+    TEXT-DECORATION: none
+}
+
+A.head:active
+{
+    COLOR: #004D88;
+    FONT-FAMILY: Tahoma,Helvetica,Arial,Verdana;
+    FONT-SIZE: 8pt;
+    FONT-WEIGHT: bold;
+    TEXT-DECORATION: none
+}
+A.head:visited
+{
+    COLOR: #004D88;
+    FONT-FAMILY: Tahoma,Helvetica,Arial,Verdana;
+    FONT-SIZE: 8pt;
+    FONT-WEIGHT: bold;
+    TEXT-DECORATION: none
+}
+A.head
+{
+    COLOR: #004D88;
+    FONT-FAMILY: Tahoma,Helvetica,Arial,Verdana;
+    FONT-SIZE: 8pt;
+    FONT-WEIGHT: bold;
+    TEXT-DECORATION: none
+}
+A.head:link
+{
+    COLOR: #004D88;
+    FONT-FAMILY: Tahoma,Helvetica,Arial,Verdana;
+    FONT-SIZE: 8pt;
+    FONT-WEIGHT: bold;
+    TEXT-DECORATION: none
+}
+
+A.admin:active
+{
+    COLOR: #004d88;
+    FONT-FAMILY: Arial, sans-serif;
+    FONT-SIZE: 8pt;
+    FONT-WEIGHT: normal;
+    TEXT-DECORATION: none
+}
+A.admin:visited
+{
+    COLOR: #004d88;
+    FONT-FAMILY: Arial, sans-serif;
+    FONT-SIZE: 8pt;
+    FONT-WEIGHT: normal;
+    TEXT-DECORATION: none
+}
+A.admin
+{
+    COLOR: #004d88;
+    FONT-FAMILY: Arial, sans-serif;
+    FONT-SIZE: 8pt;
+    FONT-WEIGHT: normal;
+    TEXT-DECORATION: none
+}
+A.admin:link
+{
+    COLOR: #004d88;
+    FONT-FAMILY: Arial, sans-serif;
+    FONT-SIZE: 8pt;
+    FONT-WEIGHT: normal;
+    TEXT-DECORATION: none
+}
+a.textButton
+{
+    COLOR: #3F5F78;
+    FONT-FAMILY: Verdana, Arial, sans-serif;    
+    FONT-SIZE: 8pt;
+    FONT-WEIGHT: normal;
+    TEXT-DECORATION: none;
+    BACKGROUND-IMAGE:    url(./b_blank.gif);
+    BACKGROUND-REPEAT:    repeat-x;
+    BACKGROUND-POSITION:    top;    
+    PADDING-LEFT:      10px;
+    PADDING-RIGHT:      10px;
+}
+a.textButton:hover
+{
+    COLOR: #E52121;
+    FONT-SIZE: 8pt;
+    TEXT-DECORATION: underline;
+}
+
+FONT
+{
+    FONT-FAMILY: Verdana, Arial, sans-serif;
+    FONT-SIZE: 8pt;
+    FONT-WEIGHT: normal;
+    TEXT-DECORATION: none
+}
+FONT.normal
+{
+    FONT-FAMILY: Verdana, Arial, sans-serif;
+    FONT-SIZE: 8pt
+}
+FONT.generic
+{
+    COLOR: white;
+    FONT-FAMILY: Verdana, Arial, sans-serif;
+    FONT-SIZE: 8pt
+}
+FONT.genericbold
+{
+    COLOR: black;
+    FONT-FAMILY: Verdana, Arial, sans-serif;
+    FONT-SIZE: 8pt;
+    FONT-WEIGHT: bold
+}
+FONT.normalbold
+{
+    FONT-FAMILY: Verdana, Arial, sans-serif;
+    FONT-SIZE: 8pt;
+    FONT-WEIGHT: bold
+}
+FONT.head
+{
+    FONT-FAMILY: Verdana, Arial, sans-serif;
+    FONT-SIZE: 10pt;
+    FONT-WEIGHT: bold
+}
+FONT.summary
+{
+    COLOR: #808080;
+    FONT-FAMILY: Verdana, Arial, sans-serif;
+    FONT-SIZE: 8pt;
+    FONT-STYLE: italic
+}
+FONT.note
+{
+    COLOR: black;
+    FONT-FAMILY: Verdana, Arial, sans-serif;
+    FONT-SIZE: 8pt;
+    FONT-STYLE: italic
+}
+FONT.tab
+{
+    COLOR: black;
+    FONT-FAMILY: Verdana, Arial, sans-serif;
+    FONT-SIZE: 8pt
+}
+FONT.warning
+{
+    COLOR: #c00000;
+    FONT-FAMILY: Verdana, Arial, sans-serif;
+    FONT-SIZE: 8pt;
+    FONT-WEIGHT: bold
+}
+FONT.adminwarning
+{
+    COLOR: #b62828;
+    FONT-FAMILY: Verdana, Arial, sans-serif;
+    FONT-SIZE: 8pt;
+    FONT-WEIGHT: bold
+}
+FONT.message
+{
+    FONT-FAMILY: Verdana, Arial, sans-serif;
+    FONT-SIZE: 8pt;
+    font-color: #808080
+}
+TABLE
+{
+    FONT-FAMILY: Verdana, Arial, sans-serif;
+    FONT-SIZE: 8pt;
+    MARGIN: 0px;
+    font-COLOR: black
+}
+TABLE.pane1
+{
+    BORDER-BOTTOM: 0px groove;
+    BORDER-LEFT: 0px groove;
+    BORDER-RIGHT: 0px groove;
+    BORDER-TOP: 0px groove;
+    FONT-FAMILY: Verdana, Arial, sans-serif;
+    FONT-SIZE: 8pt;
+    MARGIN: 0px;
+    TEXT-ALIGN: center;
+    font-COLOR: black
+}
+TABLE.pane2
+{
+    COLOR: black;
+    FONT-FAMILY: Verdana, Arial, sans-serif;
+    FONT-SIZE: 8pt;
+    FONT-WEIGHT: bold;
+    MARGIN: 0px;
+    TEXT-ALIGN: center
+}
+TABLE.normal
+{
+    BACKGROUND: none transparent scroll repeat 0% 0%;
+    FONT-FAMILY: Verdana, Arial, sans-serif;
+    FONT-SIZE: 8pt;
+    MARGIN: 0px;
+    font-color: black
+}
+TABLE.head1
+{
+    BACKGROUND: #a8c4d8;
+    FONT-FAMILY: Verdana, Arial, sans-serif;
+    FONT-SIZE: 10pt;
+    FONT-WEIGHT: bold;
+    MARGIN: 0px;
+    font-color: #ffffff
+}
+TABLE.head2
+{
+    BACKGROUND: #a8bac6;
+    FONT-FAMILY: Verdana, Arial, sans-serif;
+    FONT-SIZE: 8pt;
+    MARGIN: 0px;
+    font-color: #ffffff
+}
+TABLE.admin1
+{
+    BACKGROUND: #a8c4d8;
+    BORDER-BOTTOM-COLOR: #000000;
+    BORDER-LEFT-COLOR: #000000;
+    BORDER-RIGHT-COLOR: #000000;
+    BORDER-TOP-COLOR: #000000;
+    COLOR: black;
+    FONT-FAMILY: Verdana, Arial, sans-serif;
+    FONT-SIZE: 8pt;
+    FONT-WEIGHT: bold;
+    border-spacing: 1pt
+}
+TABLE.admin2
+{
+    BACKGROUND: none transparent scroll repeat 0% 0%;
+    BORDER-BOTTOM-COLOR: #000000;
+    BORDER-LEFT-COLOR: #000000;
+    BORDER-RIGHT-COLOR: #000000;
+    BORDER-TOP-COLOR: #000000;
+    COLOR: black;
+    FONT-FAMILY: Verdana, Arial, sans-serif;
+    FONT-SIZE: 8pt;
+    border-spacing: 1pt
+}
+SELECT
+{
+    FONT-FAMILY: Verdana, Arial, sans-serif;
+    FONT-SIZE: 11px
+}
+TEXTAREA
+{
+    COLOR: #000000;
+    FONT-FAMILY: Verdana, Arial, sans-serif;
+    FONT-SIZE: 8pt;
+    FONT-WEIGHT: normal
+}
+UNKNOWN
+{
+    COLOR: #000000;
+    FONT-FAMILY: Verdana, Arial, sans-serif;
+    FONT-SIZE: 8pt
+}
+/* /////////////////////////////////////////////////////////////////////// */
+/* RESULT LIST STYLES
+/* /////////////////////////////////////////////////////////////////////// */
+
+table.pResultList {
+	background-color:    #F2F8FE;
+	background-image:    url(./images/redesign/content_background_strip.gif);
+	background-repeat:   repeat-x;
+	background-position: bottom;
+	border-color:        #7C9CCB;
+	border-style:        solid;
+	border-width:        1px;
+	margin-left:         10px;
+	margin-right:        10px;
+	margin-top:          5px;
+	margin-bottom:       10px;
+}
+
+table.pResultList a.rootTitle {
+	color:            black;
+	font-weight:      bold;
+}
+.pResultTitle, .pResultSummary {
+	font-size:           10pt;
+	line-height:         12pt;
+	margin-left:         10px;
+	margin-right:        10px;
+}
+
+.pResultTitle {
+	font-weight:         bold;
+	text-decoration:     underline;
+	color:               #000000;
+	margin-top:          4px;
+	margin-bottom:       2px;
+}
+
+.pResultSummary {
+	margin-top:          2px;
+	margin-bottom:       12px;
+}
+
+/* /////////////////////////////////////////////////////////////////////// */
+/* TREE STYLES
+/* /////////////////////////////////////////////////////////////////////// */
+
+table.tree {
+  width:		auto;
+  padding:             0px;
+  margin:              0px;
+  cellpadding:		0px;
+  cellspacing:		0px;
+  border-collapse:  collapse;
+}
+
+table.tree td.treeFill {
+  background-image:    url(./line.gif);
+  padding:             0px;
+  margin:              0px;
+  cellpadding:		0px;
+  cellspacing:		0px;
+  background-repeat:   repeat-y;
+  border-width:        0px;
+  border-collapse:  collapse;
+  white-space: 		nowrap; 
+}
+
+table.tree td.treeFillNoBack {
+  padding:             0px;
+  margin:              0px;
+  cellpadding:		0px;
+  cellspacing:		0px;
+  border-width:        0px;
+  border-collapse:  collapse;
+}
+
+table.tree td.label {
+  width:		auto;
+  font-weight:      normal;
+  padding-left:     4px;
+  margin:           0px;
+  cellpadding:		0px;
+  cellspacing:		0px;
+}
+
+table.tree td.label  a {
+  font-weight:      normal;
+}
+
+table.tree td.highlight {
+  width:		auto;
+  font-weight:      bold;
+  padding-left:     4px;
+  margin:           0px;
+  cellpadding:		0px;
+  cellspacing:		0px;
+}
+
+table.tree td.highlight a {
+  font-weight:      bold;
+}
+table.tree a.suggestedSearch {
+}
+table.tree a.clusterTitle {
+}
+table.tree a.selectedClusterTitle {
+	color:            black;
+	font-weight:      bold;
+}
+
+/*/////////////////////*/
+/* QUERY SUMMARY TREES */
+/*/////////////////////*/
+
+table.qsTree
+{
+	border-collapse: collapse;
+	width:           auto;
+	padding:         auto;
+	margin:          0px;;
+	border-spacing:  auto;
+}
+
+table.qsTree img
+{
+	vertical-align: middle;
+	border-width:   0px;
+}
+
+table.qsTree td a
+{
+	font-size:      8pt;
+	padding:        auto;
+	margin:         auto;
+	vertical-align: middle;
+}
+
+table.qsTree tr.row
+{
+	height: 24px;
+}
+
+table.qsTree td.expandable
+{
+	background-image:    url('./AutonomyRetrieval/gapline.gif');
+	background-repeat:   no-repeat;
+	text-align:          center;
+	width:               19px;
+	background-position: center;
+	padding:             auto;
+	margin:              auto;
+	vertical-align:      middle;
+}
+table.qsTree td.expandableLast
+{
+	background-image:    url('./AutonomyRetrieval/lastgapline.gif');
+	background-repeat:   no-repeat;
+	text-align:          center;
+	width:               19px;
+	background-position: center;
+}
+table.qsTree td.expandableRoot
+{
+	background-image:    url('./AutonomyRetrieval/rootline.gif');
+	background-repeat:   no-repeat;
+	text-align:          center;
+	width:               19px;
+	background-position: center;
+}
+table.qsTree td.unexpandable
+{
+	background-image:    url('./AutonomyRetrieval/joinline.gif');
+	background-repeat:   no-repeat;
+	width:               19px;
+	background-position: center;
+}
+table.qsTree td.unexpandableLast
+{
+	background-image:    url('./AutonomyRetrieval/lastjoinline.gif');
+	background-repeat:   no-repeat;
+	width:               19px;
+	background-position: center;
+}
+table.qsTree td.unexpandableRoot
+{
+
+}
+
+table.qsTree td.longFill
+{
+	background-image:    url('./AutonomyRetrieval/fullline.gif');
+	background-repeat:   repeat-y;
+	width:               19px;
+	background-position: center;
+}
+
+table.qsTree td.folder
+{
+	background-image:    url('./AutonomyRetrieval/rootline2.gif');
+	background-repeat:   no-repeat;
+	width:               auto;
+	background-position: left;
+}
+table.qsTree td.expandedFolder
+{
+	background-image:    url('./AutonomyRetrieval/rootline3.gif');
+	background-repeat:   no-repeat;
+	width:               auto;
+	background-position: left;
+}
+
+table.qsTree font.other
+{
+	font-style: italic;
+	font-size:  8pt;
+}
+table.qsTree font.selected
+{
+	font-weight: bold;
+	font-size:   8pt;
+}
+
+/*//////////////*/
+/* IDEAS CLOUDS */
+/*//////////////*/
+
+div.cloud
+{
+	padding: 2em 2em 1em 2em;
+}
+
+div.cloud div.drop
+{
+	font-size: 160%;
+	font-family: sans-serif;
+	text-align: center
+}
+
+div.cloud div.drop .droplet
+{
+	vertical-align: middle
+}
+
+div.cloud div.drop .droplet a
+{
+	color: inherit;
+	text-decoration: none;
+}
+
+div.cloud div.drop .droplet.verysmall a {font-size: 100%; color: #99a9bD; }
+div.cloud div.drop .droplet.verysmallinverse a {font-size: 100%; color: #ee6666; }
+div.cloud div.drop .droplet.small a { font-size: 120%; color: #79899D; }
+div.cloud div.drop .droplet.smallinverse a { font-size: 120%; color: #ee6666; }
+div.cloud div.drop .droplet.medium a { font-size: 140%; color: #69798D; }
+div.cloud div.drop .droplet.mediuminverse a { font-size: 140%; color: #bb2222; }
+div.cloud div.drop .droplet.large a { font-size: 160%; color: #59697D; }
+div.cloud div.drop .droplet.largeinverse a { font-size: 160%; color: #bb3535;}
+div.cloud div.drop .droplet.verylarge a { font-size: 180%; color: #59697D; }
+div.cloud div.drop .droplet.verylargeinverse a { font-size: 180%; color: #992222; }
+
+div.cloud div.drop .droplet a:hover
+{
+	color: #E52121;
+}

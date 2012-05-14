@@ -1,0 +1,25 @@
+<%
+request.setCharacterEncoding("utf-8");
+response.setContentType("text/html; charset=utf-8");
+%>
+
+	<tr>
+		<td colspan="2" align="center">
+            <a href="javascript:document.form_<%=EditPortlet.getPortletKey()%>_editSettings.submit();" title="OK" class="textButton"><%=rb.getString("portlet_useredit_footer.ok")%></a>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <a class="textButton" title="Back" href="javascript:history.back()">
+				<%=rb.getString("bookmark.back")%>
+			</a>
+		</td>
+	</tr>
+</table>
+</form>
+
+		<%
+	}//end of user has privilege to edit this pane check
+}
+else
+{
+	CurrentPortal.Log("portlet_useredit: Failed, error " + sError);
+}
+%>

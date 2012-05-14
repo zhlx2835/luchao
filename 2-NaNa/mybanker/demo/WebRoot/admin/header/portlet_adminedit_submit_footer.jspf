@@ -1,0 +1,14 @@
+<%
+request.setCharacterEncoding("utf-8");
+response.setContentType("text/html; charset=utf-8");
+%>
+
+<%
+allPortlets.save();
+String sRedirectHref = request.getParameter("redirecthref");
+if(!StringUtils.strValid(sRedirectHref))
+{
+	sRedirectHref = "edit.jsp";
+}
+response.sendRedirect("../portlets/" + sRedirectHref + "?message=Your+changes+have+been+saved&action=listPortlets");
+%>
