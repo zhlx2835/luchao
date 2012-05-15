@@ -52,55 +52,43 @@ else
 		<meta http-equiv="content-type" content="text/html;charset=utf-8" />
 	</head>
 	<body STYLE="background-color:transparent">
-		<table class="pContainer">
-			<tr>
 				<!-- main page include -->
-				<td>
-					<table width="100%" border="0">
+					<table border=1 width="100%">
 						<tr>
-							<td colspan="2">
-								<%@ include file="showError_include.jspf" %>
-								<%@ include file="showMessage_include.jspf" %>
+							<td colspan=2>
+								<%
+											out.flush();
+											pageContext.include("displayQueryForm.jsp");
+								%>
 							</td>
 						</tr>
 						<tr>
-							<td colspan="2">
-<%
-								out.flush();
-								pageContext.include("displayQueryForm.jsp");
-%>
+							<td width="160px">&nbsp;
 							</td>
-						</tr>
-						<!-- This produces a simple seperator -->
-						<tr>
-							<td colspan="2">
-								<a name="<%= service.makeFormActionLink(" ").substring(service.makeFormActionLink(" ").indexOf("#")+1) %>queryResultsTop"></a>
-								<table width="100%" class="seperator">
-									<tr><td/></tr>
-								</table>
+							<td rowspan=2>
+								<%
+												out.flush();
+												pageContext.include("displayResultPages.jsp");
+			
+												out.flush();
+												pageContext.include("displayFederatedResults.jsp");
+								%>
 							</td>
 						</tr>
 						<tr>
-							<td width="30%" align="left" valign="top">
-<%
-								out.flush();
-								pageContext.include("displayTree.jsp");
-%>
-							</td>
-							<td width="70%" align="left" valign="top">
-<%
-									out.flush();
-									pageContext.include("displayResultPages.jsp");
-
-									out.flush();
-									pageContext.include("displayFederatedResults.jsp");
-%>
+							<td>
+								<%
+											out.flush();
+											pageContext.include("displayTree.jsp");
+								%>
 							</td>
 						</tr>
-					</table>
-				</td>
-			</tr>
-		</table>
+						<tr>
+						<td colspan=2>
+							&nbsp;
+						</td>
+					</tr>
+				</table>
 	</body>
 </html>
 
