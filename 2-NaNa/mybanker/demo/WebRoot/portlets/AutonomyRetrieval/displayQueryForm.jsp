@@ -194,19 +194,12 @@ function retrievalCheckForEnter()
 							<font class="normalbold">
 								<%=rb.getString("displayQueryForm.queryText")%>
 							</font>
-						</td>
-					</tr>
-					<tr>
-						<td colspan="2" align="right">
 							<font class="<%= service.getCSSClass(PortalService.FIELD_TEXT) %>">
-								<textarea rows="5"
-								          cols="49"
-								          wrap="virtual"
-								          tabindex="1"
-								          onkeyup="javascript:retrievalCheckForEnter();"
-								          name="<%= queryTextParamName %>"
- 								          ><%= StringUtils.XMLEscape(queryText) %></textarea>
+ 								 <input name="<%= queryTextParamName %>" value="<%= StringUtils.XMLEscape(queryText) %>"/>
 							</font>
+							<a class="textButton" href="javascript:retrievalSubmitForm();" title="Search">
+								<%=rb.getString("displayQueryForm.search")%>
+							</a>
 						</td>
 					</tr>
 
@@ -220,7 +213,7 @@ function retrievalCheckForEnter()
 							<font class="<%= service.getCSSClass(PortalService.FIELD_TEXT) %>">
 								<%= HTMLUtils.createSelect(service.makeParameterName(RetrievalConstants.REQUEST_PARAM_NUM_RESULTS),
 								                                                     RetrievalConstants.NUM_RESULTS_OPTIONS,
-								                                                     Integer.parseInt(service.getSafeRequestParameter(service.makeParameterName(RetrievalConstants.REQUEST_PARAM_NUM_RESULTS), "6"))
+								                                                     Integer.parseInt(service.getSafeRequestParameter(service.makeParameterName(RetrievalConstants.REQUEST_PARAM_NUM_RESULTS), "10"))
 								                                                     )%>
 							</font>
 						</td>
@@ -524,19 +517,6 @@ function retrievalCheckForEnter()
 					}
 				%>
 
-					<!-- This bit lowers the sorting stuff so everything looks in place -->
-					<tr>
-						<td colspan="2" height="5">
-						</td>
-					</tr>
-					<tr>
-						<td colspan="2" align="right">
-							<a class="textButton" href="javascript:retrievalSubmitForm();" title="Search">
-								<%=rb.getString("displayQueryForm.search")%>
-							</a>
-
-						</td>
-					</tr>
 
 				</table>
 			</td>

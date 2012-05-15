@@ -68,11 +68,11 @@ else
 								out.flush();
 								if(service.getSessionAttribute(AgentConstants.SESSION_ATTRIB_SHOW_EDIT_FORM) != null)
 								{
-									pageContext.include("displayAgentForm.jsp");
+									pageContext.include("../AutonomyAgents/displayAgentForm.jsp");
 								}
 								else
 								{
-									pageContext.include("displayAgentList.jsp");
+									pageContext.include("../AutonomyAgents/displayAgentList.jsp");
 								}
 %>
 							</td>
@@ -91,7 +91,7 @@ else
 									out.flush();
 									if(sErrorMessage != null && sErrorMessage.indexOf("already exists") != -1)
 									{
-										pageContext.include("newAgent.jsp");
+										pageContext.include("../AutonomyAgents/newAgent.jsp");
 									}
 									else
 									{

@@ -32,7 +32,9 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     <a href="portlets/AutonomyHotNews/AutonomyHotNews.jsp">热点新闻</a>
     <a href="portlets/AutonomyChannels/AutonomyChannels.jsp">定制分类</a>
     <a href="portlets/AutonomyCategoryAdmin/AutonomyCategoryAdmin.jsp">定制分类管理</a>
-    <a href="portlets/AutonomyProfile/AutonomyProfile.jsp">个性化推送</a>
+    <a href="portlets/AutonomyProfile/AutonomyProfile.jsp">个性化推送</a><br/>
+    
+    <a href="simplequery.jsp">例子</a>
     </center>
   </body>
 </html>
