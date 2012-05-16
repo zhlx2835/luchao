@@ -59,7 +59,7 @@ int pagesize = 10;
 if(strQuery==null || strQuery.equals("")) {qFlag = false;}
 int list_start = (curpage-1)*pagesize+1;
 int list_end = curpage*pagesize;
-String strLinkText = "simplequery.jsp?qtext="+strSearchText+"&cp=";
+String strLinkText = "query.jsp?qtext="+strSearchText+"&cp=";
 
 ArrayList queryResultList = new ArrayList();
 String strTotalResults = "0";
@@ -167,7 +167,7 @@ else
 <body>
 <table class="text" >
 <tr>
-	<form action="simplequery.jsp">
+	<form action="query.jsp">
 	<td valign="middle" align="right">
  		<input type="submit" value="确定" name="submit">
 		<input type="text" name="qtext" id="qtext" size="50" maxlength="100" value="<%=strDisplayQuery%>">
@@ -179,9 +179,10 @@ else
 <hr>
 <table class="text"  width="100%">
 <tr>
-	<td valign="top"><!--content-->
+	<td valign="top">
+		<!--content-->
 		共有 <%=strTotalResults%> 条记录  用时 <%=TimeEnd-TimeBegin%> 毫秒
-		<table class="text" >
+		<table class="text">
 <%
 	for(int i=0;i<queryResultList.size();i++)
 	{
@@ -198,6 +199,10 @@ else
 	int thispage = curpage;
 	int totalpage = (Integer.parseInt(strTotalResults)-1)/pagesize+1;
 	if(!strTotalResults.equals("0")) {
+		out.println("<a href='"+strLinkText+(1)+"'>首页</a>");
+		if((thispage-1)>=1&&(thispage-1)<=totalpage){
+			out.println("<a href='"+strLinkText+(thispage-1)+"'>上一页</a>");
+		}
 		if(thispage<=3){
 			for(int i=1;i<=5;i++) {
 				if(i<=totalpage) {
@@ -212,19 +217,17 @@ else
 			for(int i=thispage-2;i<=thispage+2;i++){
 				if(i<=totalpage){
 					if(thispage==i){
-						out.println("<a href='"+strLinkText+i+"'>"+i+"</a>　");
+						out.println("<a href='"+strLinkText+i+"'>"+i+"</a>");
 					}else{
-						out.println("<a href='"+strLinkText+i+"'>["+i+"]</a>　");
+						out.println("<a href='"+strLinkText+i+"'>["+i+"]</a>");
 					}
 				}
 			}
 		}
-		if((thispage-1)>=1&&(thispage-1)<=totalpage){
-			out.println(" <a href='"+strLinkText+(thispage-1)+"'>上一页</a>");
-		}
 		if((thispage+1)<=totalpage){
-			out.println(" <a href='"+strLinkText+(thispage+1)+"'>下一页</a>");
+			out.println("<a href='"+strLinkText+(thispage+1)+"'>下一页</a>");
 		}
+		out.println("<a href='"+strLinkText+(totalpage)+"'>最后一页</a>");
 	}
 
 %>	
