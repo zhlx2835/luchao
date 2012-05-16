@@ -4,5 +4,7 @@
 3.2012-1-10 上传了qingjian.html (不用时可删)
 4.rule.html论坛版规
 5.sina_verified_check.txt新浪微博认证文件
-6.ccafa2102af5e961c52c35e1da150c53.txt  QQ空间认证文件
-7.wb_8f9f0f64897ee97d.txt新浪微博 账号通认证文件
+6.ccafa2102af5e961c52c35e1da150c53.txt  QQ空间认证文件  --已删
+7.wb_8f9f0f64897ee97d.txt新浪微博 账号通认证文件  --已删
+
+
