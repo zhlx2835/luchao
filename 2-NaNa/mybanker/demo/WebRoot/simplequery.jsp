@@ -59,7 +59,7 @@ int pagesize = 10;
 if(strQuery==null || strQuery.equals("")) {qFlag = false;}
 int list_start = (curpage-1)*pagesize+1;
 int list_end = curpage*pagesize;
-String strLinkText = "query.jsp?qtext="+strSearchText+"&cp=";
+String strLinkText = "simplequery.jsp?qtext="+strSearchText+"&cp=";
 
 ArrayList queryResultList = new ArrayList();
 String strTotalResults = "0";
@@ -167,7 +167,7 @@ else
 <body>
 <table class="text" >
 <tr>
-	<form action="query.jsp">
+	<form action="simplequery.jsp">
 	<td valign="middle" align="right">
  		<input type="submit" value="确定" name="submit">
 		<input type="text" name="qtext" id="qtext" size="50" maxlength="100" value="<%=strDisplayQuery%>">
