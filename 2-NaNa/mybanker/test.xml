@@ -3,7 +3,7 @@
   <message> 
     <id> 001 </id> 
     <Parentid> 1 </Parentid> 
-    <Fullname> 张正明 </Fullname> 
+    <Fullname id="fn"> 张正明 </Fullname> 
     <address> 
       <id> 011 </id> 
       <Parentid> 001 </Parentid> 
