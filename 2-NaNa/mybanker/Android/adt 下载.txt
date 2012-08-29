@@ -1,0 +1,10 @@
+在这里找到需要下载的版本
+http://developer.android.com/tools/sdk/eclipse-adt.html
+
+http://dl.google.com/android/ADT-20.0.3.zip
+其他版本也可以这样下载
+http://dl.google.com/android/ADT-xx.x.x.zip
+
+
+org.eclipse.core.runtime(3.6.0)
+http://grepcode.com/project/repository.grepcode.com/java/eclipse.org/3.6/org.eclipse.core/runtime/
