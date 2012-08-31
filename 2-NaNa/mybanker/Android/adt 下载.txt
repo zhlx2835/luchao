@@ -16,3 +16,6 @@ http://dl.google.com/android/android-sdk_r04-windows.zip
 
 org.eclipse.core.runtime(3.6.0)
 http://grepcode.com/project/repository.grepcode.com/java/eclipse.org/3.6/org.eclipse.core/runtime/
+
+
+http://dl-ssl.google.com/android/repository/android-2.2_r01-windows.zip
