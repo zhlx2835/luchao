@@ -1,7 +1,7 @@
 
-1.47e4dc2bba7949c.html 该文件为www.chinaz.com的文件 (不用时可删)
-2.2012-1-10 上传了address文件夹 (不用时可删)
-3.2012-1-10 上传了qingjian.html (不用时可删)
+1.47e4dc2bba7949c.html 该文件为www.chinaz.com的文件 (不用时可删) --已删
+2.2012-1-10 上传了address文件夹 (不用时可删) --已删
+3.2012-1-10 上传了qingjian.html (不用时可删) --已删
 4.rule.html论坛版规
 5.sina_verified_check.txt新浪微博认证文件
 6.ccafa2102af5e961c52c35e1da150c53.txt  QQ空间认证文件  --已删
