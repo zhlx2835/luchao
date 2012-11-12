@@ -1,9 +1,0 @@
-<resources>
-
-    <string name="app_name">电话拨号器</string>
-    <string name="hello_world">号码：</string>
-    <string name="menu_settings">Settings</string>
-    <string name="title_activity_main">拨号窗口</string>
-    <string name="call">拨号</string>
-
-</resources>
