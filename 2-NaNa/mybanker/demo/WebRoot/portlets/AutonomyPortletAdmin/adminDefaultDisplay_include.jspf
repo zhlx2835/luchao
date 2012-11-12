@@ -1,6 +1,0 @@
-<%
-// set inputs for include
-sSelectedPortlet = "default";
-bAllowParamRemoval = true;
-%>
-<%@ include file="adminPortletDisplay_include.jspf" %>							
