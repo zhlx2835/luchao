@@ -1,0 +1,45 @@
+帖子阅读页面：web/template/wind/read.htm
+
+帖子标题：{$subject}
+帖子链接：$db_bbsurl/read.php?tid=$tid   (http://www.eqishare.com/read.php?tid=425)
+发表时间: $read[posttime]     （2012-07-24）
+发布地点：$tmpHtml      （来自:北京市）
+本帖作者：<a href="{$db_userurl}$read[authorid]">{$read[author]}</a> 
+ 
+
+搜索“<!--评分结束-->”放到后边
+<!-- 本文地址开始 LuChao更新-->
+		<div>
+        <b><a href="$db_bbsurl/read.php?tid=$tid">本文地址: </a></b><input type="text" value="$db_bbsurl/read.php?tid=$tid" id="datacopy" style="width:250px" readonly="readonly"/> <input type="button" id="btncopy" value="复制"/>
+		</div>
+		<br />
+
+    <script type="text/javascript">
+        (function(){
+            var $=function(id){return "string" == typeof id ? document.getElementById(id) : id;};
+            var start, end, obj, data;
+            obj = $("datacopy");
+            data = obj.value;
+            end = data.length;
+            $("btncopy").onclick = function(){
+                if(-[1,]){             //处理费IE浏览器
+                    alert("您使用的浏览器不支持此复制功能，请使用Ctrl+C或鼠标右键。");
+                    obj.setSelectionRange(0,end);
+                    obj.focus();
+                }else{
+                    var flag = window.clipboardData.setData("text",data);
+                    if(flag == true){
+                        alert("复制成功。现在您可以粘贴（Ctrl+v）到Blog或BBS中了。");
+                    }else{
+                        alert("复制失败。");
+                    }
+                    var range = obj.createTextRange();
+                    range.moveEnd("character",end);
+                    range.moveStart("character",0);
+                    range.select();
+                }
+ 
+            }
+        })()
+    </script>
+<!-- 本文地址结束 LuChao更新-->
