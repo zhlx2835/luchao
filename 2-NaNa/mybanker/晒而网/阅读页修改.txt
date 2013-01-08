@@ -55,7 +55,7 @@
 <meta property="og:title" content="{$subject}" />
 <meta property="og:description" content="{$subject}【{$read[author]} $tmpHtml 于 $read[posttime] 发表 《{$subject}》】" />
 <!--选填-->
-<meta property="og:image" content="$db_bbsurl/images/wind85/logo.png" />
+<meta property="og:image" content="$db_bbsurl/images/logojpg.jpg" />
 <meta name="weibo: article:create_at" content="$read[posttime]" />
 <meta name="weibo: article:update_at" content="$read[posttime]" />
 <!--显示-->
