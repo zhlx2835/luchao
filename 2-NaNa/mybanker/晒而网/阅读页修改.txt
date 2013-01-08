@@ -7,6 +7,7 @@
 本帖作者：<a href="{$db_userurl}$read[authorid]">{$read[author]}</a> 
  
 
+
 搜索“<!--评分结束-->”放到后边
 <!-- 本文地址开始 LuChao更新-->
 		<div>
