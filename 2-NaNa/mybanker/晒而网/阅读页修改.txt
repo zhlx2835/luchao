@@ -1,4 +1,4 @@
-帖子阅读页面：web/template/wind/read.htm
+1.帖子阅读页面：web/template/wind/read.htm
 
 帖子标题：{$subject}
 帖子链接：$db_bbsurl/read.php?tid=$tid   (http://www.eqishare.com/read.php?tid=425)
@@ -8,7 +8,7 @@
  
 
 
-搜索“<!--评分结束-->”放到后边
+2.搜索“<!--评分结束-->”放到后边
 <!-- 本文地址开始 LuChao更新-->
 		<div>
         <b><a href="$db_bbsurl/read.php?tid=$tid">本文地址: </a></b><input type="text" value="$db_bbsurl/read.php?tid=$tid" id="datacopy" style="width:250px" readonly="readonly"/> <input type="button" id="btncopy" value="复制"/>
@@ -44,3 +44,21 @@
         })()
     </script>
 <!-- 本文地址结束 LuChao更新-->
+
+3.微博“赞一个”插件
+<!-- 新浪微博赞一个插件 -->
+<html xmlns:wb=“http://open.weibo.com/wb”>
+<script src="http://tjs.sjs.sinajs.cn/open/api/js/wb.js" type="text/javascript" charset="utf-8"></script>
+<!--必填-->
+<meta property="og:type" content="article" />
+<meta property="og:url" content="$db_bbsurl/read.php?tid=$tid" />
+<meta property="og:title" content="{$subject}" />
+<meta property="og:description" content="{$subject}【{$read[author]} $tmpHtml 于 $read[posttime] 发表 《{$subject}》】" />
+<!--选填-->
+<meta property="og:image" content="$db_bbsurl/images/wind85/logo.png" />
+<meta name="weibo: article:create_at" content="$read[posttime]" />
+<meta name="weibo: article:update_at" content="$read[posttime]" />
+<!--显示-->
+<wb:like type="text"></wb:like>
+
+
